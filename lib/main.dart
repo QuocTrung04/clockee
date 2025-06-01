@@ -1,8 +1,8 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:iconify_design/iconify_design.dart';
+import 'screens/home_screen.dart';
 
 void main() {
+<<<<<<< HEAD
   runApp(
     MaterialApp(
       home: SafeArea(
@@ -90,4 +90,19 @@ void main() {
       debugShowCheckedModeBanner: false,
     ),
   );
+=======
+  runApp(const MyApp());
+>>>>>>> 357cb93fbf326b1ca75b324e83b1675c1b547c78
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SafeArea(child: HomeScreen()),
+    );
+  }
 }
