@@ -79,7 +79,7 @@ void main() {
             items: [
               IconifyIcon(icon: 'iconoir:home', color: Color(0xFF662D91)),
               IconifyIcon(
-                icon: 'iconamoon:phone-thin',
+                icon: 'icon-park-twotone:phone',
                 color: Color(0xFF662D91),
               ),
               IconifyIcon(icon: 'iconoir:heart', color: Color(0xFF662D91)),
