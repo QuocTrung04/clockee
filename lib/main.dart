@@ -1,5 +1,4 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 
@@ -75,7 +74,7 @@ void main() {
           bottomNavigationBar: CurvedNavigationBar(
             backgroundColor: Color(0xFFF3F3F3),
             animationCurve: Curves.linear,
-            animationDuration: const Duration(milliseconds: 300),
+            animationDuration: const Duration(milliseconds: 200),
             items: [
               IconifyIcon(icon: 'iconoir:home'),
               IconifyIcon(icon: 'iconamoon:phone-thin'),
