@@ -1,5 +1,4 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 
@@ -73,13 +72,17 @@ void main() {
           ),
           body: SingleChildScrollView(child: Column()), //giao dien chinh
           bottomNavigationBar: CurvedNavigationBar(
+            height: 60,
             backgroundColor: Color(0xFFF3F3F3),
             animationCurve: Curves.linear,
             animationDuration: const Duration(milliseconds: 300),
             items: [
-              IconifyIcon(icon: 'iconoir:home'),
-              IconifyIcon(icon: 'iconamoon:phone-thin'),
-              IconifyIcon(icon: 'iconoir:heart'),
+              IconifyIcon(icon: 'iconoir:home', color: Color(0xFF662D91)),
+              IconifyIcon(
+                icon: 'iconamoon:phone-thin',
+                color: Color(0xFF662D91),
+              ),
+              IconifyIcon(icon: 'iconoir:heart', color: Color(0xFF662D91)),
             ],
           ),
         ),
