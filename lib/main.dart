@@ -72,13 +72,17 @@ void main() {
           ),
           body: SingleChildScrollView(child: Column()), //giao dien chinh
           bottomNavigationBar: CurvedNavigationBar(
+            height: 60,
             backgroundColor: Color(0xFFF3F3F3),
             animationCurve: Curves.linear,
             animationDuration: const Duration(milliseconds: 200),
             items: [
-              IconifyIcon(icon: 'iconoir:home'),
-              IconifyIcon(icon: 'iconamoon:phone-thin'),
-              IconifyIcon(icon: 'iconoir:heart'),
+              IconifyIcon(icon: 'iconoir:home', color: Color(0xFF662D91)),
+              IconifyIcon(
+                icon: 'iconamoon:phone-thin',
+                color: Color(0xFF662D91),
+              ),
+              IconifyIcon(icon: 'iconoir:heart', color: Color(0xFF662D91)),
             ],
           ),
         ),
