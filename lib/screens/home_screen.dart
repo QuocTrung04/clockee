@@ -6,10 +6,16 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../data/data.dart';
 import '../models/sanpham.dart';
+import '../screens/menu_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,7 +106,7 @@ class HomeScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: GenderToggleButtons(),
+              child: GenderStatusButtons(),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
@@ -112,7 +118,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 0.65,
+                  childAspectRatio: 0.5,
                 ),
                 itemBuilder: (context, index) {
                   return SanPhamWidget(sanPham: sanpham[index]);
@@ -127,13 +133,26 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class GenderToggleButtons extends StatefulWidget {
-  const GenderToggleButtons({super.key});
-  @override
-  GenderToggleButtonsState createState() => GenderToggleButtonsState();
+void showSlideMenu(BuildContext context) {
+  late OverlayEntry overlay;
+  overlay = OverlayEntry(
+    builder: (context) => MenuScreen(
+      onClose: () {
+        overlay.remove();
+      },
+    ),
+  );
+
+  Overlay.of(context).insert(overlay);
 }
 
-class GenderToggleButtonsState extends State<GenderToggleButtons> {
+class GenderStatusButtons extends StatefulWidget {
+  const GenderStatusButtons({super.key});
+  @override
+  GenderStatusButtonsState createState() => GenderStatusButtonsState();
+}
+
+class GenderStatusButtonsState extends State<GenderStatusButtons> {
   String selected = 'nam';
 
   @override
@@ -219,14 +238,14 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 220,
+            height: 200,
             child: Stack(
               children: [
                 Image.network(
                   widget.sanPham.imageUrl,
-                  height: 180,
+                  height: 170,
                   width: double.infinity,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
                 Positioned(
                   top: 8,

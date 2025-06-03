@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 import 'package:badges/badges.dart' as badges;
+import '../screens/home_screen.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
 
   @override
-  Size get preferredSize => const Size.fromHeight(60);
+  State<CustomAppBar> createState() => _CustomAppBarState();
 
+  @override
+  Size get preferredSize => const Size.fromHeight(60);
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,7 +32,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showSlideMenu(context);
+                    },
                     icon: const IconifyIcon(
                       icon: 'ri:menu-2-line',
                       color: Color(0xFF662D91),
@@ -46,7 +54,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Xử lý tìm kiếm
+                    },
                     icon: const IconifyIcon(
                       icon: 'ic:round-search',
                       color: Color(0xFF662D91),
@@ -54,12 +64,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   const SizedBox(width: 5),
                   badges.Badge(
-                    badgeContent: Text(
+                    badgeContent: const Text(
                       '2',
                       style: TextStyle(color: Colors.white),
                     ),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // Xử lý giỏ hàng
+                      },
                       icon: const IconifyIcon(
                         icon: 'solar:cart-bold',
                         color: Color(0xFF662D91),
