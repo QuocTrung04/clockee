@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:badges/badges.dart' as badges;
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -37,9 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('assets/images/Logo.png', height: 50),
-                ],
+                children: [Image.asset('assets/images/Logo.png', height: 50)],
               ),
             ),
             Expanded(
@@ -54,11 +53,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                   const SizedBox(width: 5),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const IconifyIcon(
-                      icon: 'solar:cart-bold',
-                      color: Color(0xFF662D91),
+                  badges.Badge(
+                    badgeContent: Text(
+                      '2',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const IconifyIcon(
+                        icon: 'solar:cart-bold',
+                        color: Color(0xFF662D91),
+                      ),
                     ),
                   ),
                 ],

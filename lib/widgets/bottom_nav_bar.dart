@@ -8,13 +8,14 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CurvedNavigationBar(
+      height: 60,
       backgroundColor: const Color(0xFFF3F3F3),
       animationCurve: Curves.linear,
-      animationDuration: const Duration(milliseconds: 200),
+      animationDuration: const Duration(milliseconds: 300),
       items: const [
-        IconifyIcon(icon: 'iconoir:home'),
-        IconifyIcon(icon: 'iconamoon:phone-thin'),
-        IconifyIcon(icon: 'iconoir:heart'),
+        IconifyIcon(icon: 'iconoir:home', color: Color(0xFF662D91)),
+        IconifyIcon(icon: 'iconoir:phone', color: Color(0xFF662D91)),
+        IconifyIcon(icon: 'iconoir:heart', color: Color(0xFF662D91)),
       ],
     );
   }

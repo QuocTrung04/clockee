@@ -1,7 +1,11 @@
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:iconify_design/iconify_design.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../data/data.dart';
+import '../models/sanpham.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -13,12 +17,290 @@ class HomeScreen extends StatelessWidget {
       appBar: const CustomAppBar(),
       body: SingleChildScrollView(
         child: Column(
-          children: const [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             // Nội dung chính ở đây
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Image.asset(
+                      'assets/images/dongho.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: SizedBox(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          //sử lý sự kiện
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFFFFFF),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            children: [
+                              Image.asset('assets/images/RolexVang.png'),
+                              SizedBox(height: 20),
+                              Text('Đồng Hồ Vàng'),
+                              SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 5),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          //sử lý sự kiện
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFFFFFF),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            children: [
+                              Image.asset('assets/images/rolexKC.png'),
+                              SizedBox(height: 20),
+                              Text('Đồng Hồ Kim Cương'),
+                              SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: Container(
+                width: 168,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Color(0xFF662D91), width: 2),
+                  ),
+                ),
+                child: Text('SẢN PHẨM BÁN CHẠY'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GenderToggleButtons(),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: GridView.builder(
+                itemCount: sanpham.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.65,
+                ),
+                itemBuilder: (context, index) {
+                  return SanPhamWidget(sanPham: sanpham[index]);
+                },
+              ),
+            ),
           ],
         ),
       ),
       bottomNavigationBar: const CustomBottomNavBar(),
+    );
+  }
+}
+
+class GenderToggleButtons extends StatefulWidget {
+  const GenderToggleButtons({super.key});
+  @override
+  GenderToggleButtonsState createState() => GenderToggleButtonsState();
+}
+
+class GenderToggleButtonsState extends State<GenderToggleButtons> {
+  String selected = 'nam';
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, left: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          // Nút Đồng Hồ Nam
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                selected = 'nam';
+              });
+            },
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              margin: EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                color: selected == 'nam' ? Color(0xFF662D91) : Colors.grey[300],
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Text(
+                'Đồng Hồ Nam',
+                style: TextStyle(
+                  color: selected == 'nam' ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
+          // Nút Đồng Hồ Nữ
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                selected = 'nu';
+              });
+            },
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: selected == 'nu' ? Color(0xFF662D91) : Colors.grey[300],
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Text(
+                'Đồng Hồ Nữ',
+                style: TextStyle(
+                  color: selected == 'nu' ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SanPhamWidget extends StatelessWidget {
+  final SanPham sanPham;
+
+  const SanPhamWidget({super.key, required this.sanPham});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Color(0xFFFFFFFF),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 200,
+            child: Stack(
+              children: [
+                Image.network(
+                  sanPham.imageUrl,
+                  height: 170,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      //xu ly su kien
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: const IconifyIcon(
+                        icon: 'iconoir:heart',
+                        color: Color(0xFF662D91),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            sanPham.tenSanPham,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 4),
+
+          Text(
+            sanPham.maSanPham,
+            style: const TextStyle(
+              color: Colors.purple,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            sanPham.moTa,
+            style: const TextStyle(fontSize: 12, color: Color(0xFF662D91)),
+            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            'Giá ${_formatCurrency(sanPham.donGia)}đ',
+            style: const TextStyle(
+              color: Colors.purple,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.purple,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            child: const Text('Thêm Vào Giỏ'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatCurrency(int price) {
+    return price.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (match) => '${match[1]}.',
     );
   }
 }
