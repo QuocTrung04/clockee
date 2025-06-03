@@ -199,27 +199,32 @@ class GenderToggleButtonsState extends State<GenderToggleButtons> {
   }
 }
 
-class SanPhamWidget extends StatelessWidget {
+class SanPhamWidget extends StatefulWidget {
   final SanPham sanPham;
 
   const SanPhamWidget({super.key, required this.sanPham});
 
   @override
+  State<SanPhamWidget> createState() => _SanPhamWidgetState();
+}
+
+class _SanPhamWidgetState extends State<SanPhamWidget> {
+  @override
   Widget build(BuildContext context) {
     return Card(
-      color: Color(0xFFFFFFFF),
+      color: const Color(0xFFFFFFFF),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 200,
+            height: 220,
             child: Stack(
               children: [
                 Image.network(
-                  sanPham.imageUrl,
-                  height: 170,
+                  widget.sanPham.imageUrl,
+                  height: 180,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -227,18 +232,38 @@ class SanPhamWidget extends StatelessWidget {
                   top: 8,
                   right: 8,
                   child: GestureDetector(
-                    onTap: () {
-                      //xu ly su kien
-                    },
-                    child: Container(
+                    onTap: () {},
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
+                        boxShadow: widget.sanPham.yeuThich
+                            ? [
+                                BoxShadow(
+                                  color: Colors.purple.shade100,
+                                  blurRadius: 8,
+                                  spreadRadius: 2,
+                                ),
+                              ]
+                            : [],
                       ),
-                      child: const IconifyIcon(
-                        icon: 'iconoir:heart',
-                        color: Color(0xFF662D91),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (child, animation) {
+                          return ScaleTransition(
+                            scale: animation,
+                            child: child,
+                          );
+                        },
+                        child: IconifyIcon(
+                          key: ValueKey(widget.sanPham.yeuThich),
+                          icon: widget.sanPham.yeuThich
+                              ? 'iconoir:heart-solid'
+                              : 'iconoir:heart',
+                          color: const Color(0xFF662D91),
+                        ),
                       ),
                     ),
                   ),
@@ -247,44 +272,37 @@ class SanPhamWidget extends StatelessWidget {
             ),
           ),
           Text(
-            sanPham.tenSanPham,
+            widget.sanPham.tenSanPham,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
-
           Text(
-            sanPham.maSanPham,
+            widget.sanPham.maSanPham,
             style: const TextStyle(
-              color: Colors.purple,
+              color: Color(0xFF662D91),
               fontWeight: FontWeight.w600,
             ),
           ),
-
           const SizedBox(height: 4),
-
           Text(
-            sanPham.moTa,
+            widget.sanPham.moTa,
             style: const TextStyle(fontSize: 12, color: Color(0xFF662D91)),
             textAlign: TextAlign.center,
           ),
-
           const SizedBox(height: 4),
-
           Text(
-            'Giá ${_formatCurrency(sanPham.donGia)}đ',
+            'Giá ${_formatCurrency(widget.sanPham.donGia)}đ',
             style: const TextStyle(
-              color: Colors.purple,
+              color: Color(0xFF662D91),
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 8),
-
           ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
+              backgroundColor: const Color(0xFF662D91),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),

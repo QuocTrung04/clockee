@@ -8,7 +8,7 @@ final List<SanPham> sanpham = [
     maSanPham: 'RE-AT0018S00B',
     moTa: '39.3mm | Đồng hồ cơ (Mechanical) ',
     donGia: 28800000,
-    yeuThich: 1,
+    yeuThich: true,
   ),
   SanPham(
     imageUrl:
@@ -17,7 +17,7 @@ final List<SanPham> sanpham = [
     maSanPham: 'RE-AT0018S00B',
     moTa: '39.3mm | Đồng hồ cơ (Mechanical) ',
     donGia: 28800000,
-    yeuThich: 0,
+    yeuThich: true,
   ),
   SanPham(
     imageUrl:
@@ -26,7 +26,7 @@ final List<SanPham> sanpham = [
     maSanPham: 'RE-AT0018S00B',
     moTa: '39.3mm | Đồng hồ cơ (Mechanical) ',
     donGia: 28800000,
-    yeuThich: 0,
+    yeuThich: true,
   ),
   SanPham(
     imageUrl:
@@ -35,7 +35,7 @@ final List<SanPham> sanpham = [
     maSanPham: 'RE-AT0018S00B',
     moTa: '39.3mm | Đồng hồ cơ (Mechanical) ',
     donGia: 28800000,
-    yeuThich: 1,
+    yeuThich: false,
   ),
   SanPham(
     imageUrl:
@@ -44,7 +44,7 @@ final List<SanPham> sanpham = [
     maSanPham: 'RE-AT0018S00B',
     moTa: '39.3mm | Đồng hồ cơ (Mechanical) ',
     donGia: 28800000,
-    yeuThich: 1,
+    yeuThich: false,
   ),
   SanPham(
     imageUrl:
@@ -53,7 +53,7 @@ final List<SanPham> sanpham = [
     maSanPham: 'RE-AT0018S00B',
     moTa: '39.3mm | Đồng hồ cơ (Mechanical) ',
     donGia: 28800000,
-    yeuThich: 1,
+    yeuThich: false,
   ),
   SanPham(
     imageUrl:
@@ -62,7 +62,7 @@ final List<SanPham> sanpham = [
     maSanPham: 'RE-AT0018S00B',
     moTa: '39.3mm | Đồng hồ cơ (Mechanical) ',
     donGia: 28800000,
-    yeuThich: 1,
+    yeuThich: false,
   ),
   SanPham(
     imageUrl:
@@ -71,6 +71,6 @@ final List<SanPham> sanpham = [
     maSanPham: 'RE-AT0018S00B',
     moTa: '39.3mm | Đồng hồ cơ (Mechanical) ',
     donGia: 28800000,
-    yeuThich: 1,
+    yeuThich: false,
   ),
 ];

@@ -4,7 +4,7 @@ class SanPham {
   final String maSanPham;
   final String moTa;
   final int donGia;
-  final int yeuThich;
+  final bool yeuThich;
   SanPham({
     required this.imageUrl,
     required this.tenSanPham,
