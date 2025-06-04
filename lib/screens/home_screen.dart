@@ -110,18 +110,23 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: GridView.builder(
-                itemCount: sanpham.length,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.5,
-                ),
-                itemBuilder: (context, index) {
-                  return SanPhamWidget(sanPham: sanpham[index]);
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return GridView.builder(
+                    itemCount: sanpham.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 0.5,
+                        ),
+                    itemBuilder: (context, index) {
+                      return SanPhamWidget(sanPham: sanpham[index]);
+                    },
+                  );
                 },
               ),
             ),
@@ -238,14 +243,15 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: 200,
+            height: MediaQuery.of(context).size.height * 0.2,
             child: Stack(
               children: [
-                Image.network(
-                  widget.sanPham.imageUrl,
-                  height: 170,
-                  width: double.infinity,
-                  fit: BoxFit.contain,
+                Positioned.fill(
+                  child: Image.network(
+                    widget.sanPham.imageUrl,
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                  ),
                 ),
                 Positioned(
                   top: 8,
@@ -294,6 +300,8 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
             widget.sanPham.tenSanPham,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
           ),
           const SizedBox(height: 4),
           Text(
@@ -303,7 +311,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 10),
           Text(
             widget.sanPham.moTa,
             style: const TextStyle(fontSize: 12, color: Color(0xFF662D91)),
@@ -317,7 +325,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(

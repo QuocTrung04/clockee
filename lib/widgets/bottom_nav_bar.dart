@@ -14,8 +14,8 @@ class CustomBottomNavBar extends StatelessWidget {
       animationDuration: const Duration(milliseconds: 300),
       items: const [
         IconifyIcon(icon: 'iconoir:home', color: Color(0xFF662D91)),
-        IconifyIcon(icon: 'iconoir:phone', color: Color(0xFF662D91)),
         IconifyIcon(icon: 'iconoir:heart', color: Color(0xFF662D91)),
+        IconifyIcon(icon: 'line-md:account', color: Color(0xFF662D91)),
       ],
     );
   }

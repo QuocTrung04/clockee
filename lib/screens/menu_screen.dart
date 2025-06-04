@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 
@@ -58,7 +56,9 @@ class _SlideMenuState extends State<MenuScreen>
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
               color: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 45),
+              padding: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height * 0.056,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -70,7 +70,7 @@ class _SlideMenuState extends State<MenuScreen>
                       children: [
                         Container(
                           alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width * 0.66,
+                          width: MediaQuery.of(context).size.width * 0.654,
                           color: Color(0xFF662D91),
                           child: Text(
                             'MENU',

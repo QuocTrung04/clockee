@@ -17,7 +17,7 @@ final List<SanPham> sanpham = [
     maSanPham: 'RE-AT0018S00B',
     moTa: '39.3mm | Đồng hồ cơ (Mechanical) ',
     donGia: 28800000,
-    yeuThich: true,
+    yeuThich: false,
   ),
   SanPham(
     imageUrl:
