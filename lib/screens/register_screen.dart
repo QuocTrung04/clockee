@@ -1,16 +1,17 @@
-import 'package:clockee/screens/register_screen.dart';
+import 'package:clockee/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:iconify_design/iconify_design.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
   @override
-  State<LoginScreen> createState() => _StateLoginScreen();
+  State<RegisterScreen> createState() => _StateRegisterScreen();
 }
 
-class _StateLoginScreen extends State<LoginScreen> {
-  bool _obscure = true;
+class _StateRegisterScreen extends State<RegisterScreen> {
+  bool _password = true;
+  bool _confirmpassword = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +33,7 @@ class _StateLoginScreen extends State<LoginScreen> {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(15),
               child: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -55,7 +56,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'LOGIN',
+                          'REGISTER',
                           style: TextStyle(
                             fontSize: 40,
                             color: Colors.white,
@@ -113,7 +114,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                                     ),
                                     child: TextField(
                                       decoration: InputDecoration(
-                                        hintText: "Email or Phone Number",
+                                        hintText: "User Name",
                                         hintStyle: TextStyle(
                                           color: Colors.grey,
                                         ),
@@ -127,11 +128,44 @@ class _StateLoginScreen extends State<LoginScreen> {
                                       ),
                                     ),
                                   ),
+
                                   Container(
                                     padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.grey.shade200,
+                                        ),
+                                      ),
+                                    ),
                                     child: TextField(
-                                      obscureText: _obscure,
+                                      decoration: InputDecoration(
+                                        hintText: "Email or Phone Number",
+                                        hintStyle: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                        border: InputBorder.none,
+                                        prefixIcon: Padding(
+                                          padding: EdgeInsetsGeometry.all(10),
+                                          child: IconifyIcon(
+                                            icon: 'mdi-light:email',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.grey.shade200,
+                                        ),
+                                      ),
+                                    ),
+                                    child: TextField(
+                                      obscureText: _password,
                                       decoration: InputDecoration(
                                         hintText: "Password",
                                         hintStyle: TextStyle(
@@ -141,11 +175,44 @@ class _StateLoginScreen extends State<LoginScreen> {
                                         suffixIcon: IconButton(
                                           onPressed: () {
                                             setState(() {
-                                              _obscure = !_obscure;
+                                              _password = !_password;
                                             });
                                           },
                                           icon: IconifyIcon(
-                                            icon: _obscure
+                                            icon: _password
+                                                ? 'iconoir:eye-closed'
+                                                : 'iconoir:eye',
+                                          ),
+                                        ),
+                                        prefixIcon: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: IconifyIcon(
+                                            icon: 'arcticons:nc-passwords',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: TextField(
+                                      obscureText: _confirmpassword,
+                                      decoration: InputDecoration(
+                                        hintText: "Confirm Password",
+                                        hintStyle: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                        border: InputBorder.none,
+                                        suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _confirmpassword =
+                                                  !_confirmpassword;
+                                            });
+                                          },
+                                          icon: IconifyIcon(
+                                            icon: _confirmpassword
                                                 ? 'iconoir:eye-closed'
                                                 : 'iconoir:eye',
                                           ),
@@ -163,51 +230,29 @@ class _StateLoginScreen extends State<LoginScreen> {
                               ),
                             ),
                             SizedBox(height: 40),
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(color: Colors.grey),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Forgot Password?',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade400,
-                                      ),
-                                    ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginScreen(),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(color: Colors.grey),
                                   ),
                                 ),
-                                Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => RegisterScreen(),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(color: Colors.grey),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Create Account',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade400,
-                                      ),
-                                    ),
-                                  ),
+                                child: Text(
+                                  'Sing in',
+                                  style: TextStyle(color: Colors.grey.shade400),
                                 ),
-                              ],
+                              ),
                             ),
                             SizedBox(height: 40),
+
                             SizedBox(
                               width: 230,
                               height: 50,
