@@ -1,9 +1,7 @@
-import 'package:clockee/screens/account_screen.dart';
 import 'package:clockee/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:iconify_design/iconify_design.dart';
-import '../widgets/custom_main_Screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

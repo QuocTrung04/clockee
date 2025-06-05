@@ -1,4 +1,5 @@
 import 'package:clockee/models/sanpham.dart';
+import 'package:clockee/models/cart.dart';
 
 final List<SanPham> sanpham = [
   SanPham(
@@ -80,5 +81,24 @@ final List<SanPham> sanpham = [
     donGia: 28800000,
     gioiTinh: 0,
     yeuThich: false,
+  ),
+];
+
+final List<CartItem> cartItems = [
+  CartItem(
+    imageUrl:
+        'https://media.rolex.com/image/upload/q_auto:eco/f_auto/t_v7-majesty/c_limit,w_3840/v1/catalogue/2025/upright-c/m126618ln-0002',
+    tenSanPham: 'Đồng Hồ Nam ORIENT STAR PHIÊN BẢN GIỚI HẠN',
+    maSanPham: 'RE-AT0018S00B',
+    price: 28800000,
+    soLuong: 1,
+  ),
+  CartItem(
+    imageUrl:
+        'https://media.rolex.com/image/upload/q_auto:eco/f_auto/t_v7-majesty/c_limit,w_3840/v1/catalogue/2025/upright-c/m126618ln-0002',
+    tenSanPham: 'Đồng Hồ Nam ORIENT STAR PHIÊN BẢN GIỚI HẠN',
+    maSanPham: 'RE-AT0018S00B',
+    price: 28800000,
+    soLuong: 1,
   ),
 ];

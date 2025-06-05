@@ -1,9 +1,5 @@
-import 'package:clockee/widgets/custom_main_Screen.dart';
+import 'package:clockee/widgets/custom_main_screen.dart';
 import 'package:flutter/material.dart';
-// import 'screens/home_screen.dart';
-// import 'screens/register_screen.dart';
-// import 'screens/login_screen.dart';
-import 'screens/account_information_screen.dart';
 
 void main() {
   runApp(const MyApp());

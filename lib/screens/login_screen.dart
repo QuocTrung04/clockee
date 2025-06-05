@@ -1,4 +1,3 @@
-import 'package:clockee/screens/account_screen.dart';
 import 'package:clockee/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';

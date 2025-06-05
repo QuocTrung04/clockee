@@ -56,7 +56,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      // Xử lý tìm kiếm
+                      showSlideSearch(context);
                     },
                     icon: const IconifyIcon(
                       icon: 'ic:round-search',
@@ -71,7 +71,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                     child: IconButton(
                       onPressed: () {
-                        // Xử lý giỏ hàng
+                        showSlideCart(context);
                       },
                       icon: const IconifyIcon(
                         icon: 'solar:cart-bold',

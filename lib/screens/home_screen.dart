@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:clockee/screens/cart_item_screen.dart';
+import 'package:clockee/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 import '../data/data.dart';
@@ -134,6 +136,32 @@ void showSlideMenu(BuildContext context) {
   late OverlayEntry overlay;
   overlay = OverlayEntry(
     builder: (context) => MenuScreen(
+      onClose: () {
+        overlay.remove();
+      },
+    ),
+  );
+
+  Overlay.of(context).insert(overlay);
+}
+
+void showSlideSearch(BuildContext context) {
+  late OverlayEntry overlay;
+  overlay = OverlayEntry(
+    builder: (context) => SearchScreen(
+      onClose: () {
+        overlay.remove();
+      },
+    ),
+  );
+
+  Overlay.of(context).insert(overlay);
+}
+
+void showSlideCart(BuildContext context) {
+  late OverlayEntry overlay;
+  overlay = OverlayEntry(
+    builder: (context) => CartItemScreen(
       onClose: () {
         overlay.remove();
       },

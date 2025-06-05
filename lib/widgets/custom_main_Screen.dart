@@ -1,7 +1,3 @@
-//import '../screens/account_screen.dart';
-import 'dart:isolate';
-
-import 'package:clockee/models/sanpham.dart';
 import 'package:clockee/screens/account_information_screen.dart';
 import 'package:clockee/screens/favorite_screen.dart';
 import 'package:clockee/screens/home_screen.dart';
@@ -10,7 +6,6 @@ import '../screens/account_screen.dart';
 import 'custom_app_bar.dart';
 import 'package:iconify_design/iconify_design.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:clockee/data/data.dart';
 
 class CustomMainScreen extends StatefulWidget {
   const CustomMainScreen({super.key});

@@ -42,73 +42,73 @@ class _SlideMenuState extends State<MenuScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.black87,
-      child: Stack(
-        children: [
-          GestureDetector(
-            onTap: closeMenu,
-            child: Container(color: Colors.transparent),
-          ),
+    return SafeArea(
+      child: Material(
+        color: Colors.black87,
+        child: Stack(
+          children: [
+            GestureDetector(
+              onTap: closeMenu,
+              child: Container(color: Colors.transparent),
+            ),
 
-          SlideTransition(
-            position: _slideAnimation,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.8,
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height * 0.056,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 60,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width * 0.654,
-                          color: Color(0xFF662D91),
-                          child: Text(
-                            'MENU',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
+            SlideTransition(
+              position: _slideAnimation,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                color: Colors.white,
+
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 60,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            alignment: Alignment.center,
+                            width: MediaQuery.of(context).size.width * 0.654,
+                            color: Color(0xFF662D91),
+                            child: Text(
+                              'MENU',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          onPressed: closeMenu,
-                          icon: IconifyIcon(
-                            icon: 'carbon:close-large',
-                            color: Color(0xFF662D91),
-                            size: 40,
+                          const Spacer(),
+                          IconButton(
+                            onPressed: closeMenu,
+                            icon: IconifyIcon(
+                              icon: 'carbon:close-large',
+                              color: Color(0xFF662D91),
+                              size: 40,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(height: 20),
-                  _menuItem('THƯƠNG HIỆU', () {
-                    print("đây là thương hiệu");
-                  }),
-                  _menuItem('ĐỒNG HỒ ĐEO TAY', () {
-                    print("Đây là đồng hồ đeo tay");
-                  }),
-                  _menuItem('ĐỒNG HỒ TRANG TRÍ', () {
-                    print("đây là đồng hồ trang trí");
-                  }),
-                ],
+                    const SizedBox(height: 20),
+                    _menuItem('THƯƠNG HIỆU', () {
+                      print("đây là thương hiệu");
+                    }),
+                    _menuItem('ĐỒNG HỒ ĐEO TAY', () {
+                      print("Đây là đồng hồ đeo tay");
+                    }),
+                    _menuItem('ĐỒNG HỒ TRANG TRÍ', () {
+                      print("đây là đồng hồ trang trí");
+                    }),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
