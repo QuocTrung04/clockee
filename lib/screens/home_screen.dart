@@ -2,8 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/bottom_nav_bar.dart';
 import '../data/data.dart';
 import '../models/sanpham.dart';
 import '../screens/menu_screen.dart';
@@ -18,122 +16,116 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF3F3F3),
-      appBar: const CustomAppBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Nội dung chính ở đây
-            SizedBox(
-              width: double.infinity,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Nội dung chính ở đây
+          SizedBox(
+            width: double.infinity,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Image.asset(
+                    'assets/images/dongho.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: SizedBox(
               child: Row(
                 children: [
                   Expanded(
-                    child: Image.asset(
-                      'assets/images/dongho.png',
-                      fit: BoxFit.cover,
+                    child: GestureDetector(
+                      onTap: () {
+                        //sử lý sự kiện
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFFFFFF),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Column(
+                          children: [
+                            Image.asset('assets/images/RolexVang.png'),
+                            SizedBox(height: 20),
+                            Text('Đồng Hồ Vàng'),
+                            SizedBox(height: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        //sử lý sự kiện
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xFFFFFFFF),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Column(
+                          children: [
+                            Image.asset('assets/images/rolexKC.png'),
+                            SizedBox(height: 20),
+                            Text('Đồng Hồ Kim Cương'),
+                            SizedBox(height: 20),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: SizedBox(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          //sử lý sự kiện
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFFFFFFFF),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            children: [
-                              Image.asset('assets/images/RolexVang.png'),
-                              SizedBox(height: 20),
-                              Text('Đồng Hồ Vàng'),
-                              SizedBox(height: 20),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 5),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          //sử lý sự kiện
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Color(0xFFFFFFFF),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            children: [
-                              Image.asset('assets/images/rolexKC.png'),
-                              SizedBox(height: 20),
-                              Text('Đồng Hồ Kim Cương'),
-                              SizedBox(height: 20),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+          ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(left: 15),
+            child: Container(
+              width: 168,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Color(0xFF662D91), width: 2),
                 ),
               ),
+              child: Text('SẢN PHẨM BÁN CHẠY'),
             ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(left: 15),
-              child: Container(
-                width: 168,
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Color(0xFF662D91), width: 2),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GenderStatusButtons(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return GridView.builder(
+                  itemCount: sanpham.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.5,
                   ),
-                ),
-                child: Text('SẢN PHẨM BÁN CHẠY'),
-              ),
+                  itemBuilder: (context, index) {
+                    return SanPhamWidget(sanPham: sanpham[index]);
+                  },
+                );
+              },
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GenderStatusButtons(),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return GridView.builder(
-                    itemCount: sanpham.length,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 0.5,
-                        ),
-                    itemBuilder: (context, index) {
-                      return SanPhamWidget(sanPham: sanpham[index]);
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }
