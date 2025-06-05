@@ -4,13 +4,15 @@ class SanPham {
   final String maSanPham;
   final String moTa;
   final int donGia;
-  final bool yeuThich;
+  final int gioiTinh;
+  bool yeuThich;
   SanPham({
     required this.imageUrl,
     required this.tenSanPham,
     required this.maSanPham,
     required this.moTa,
     required this.donGia,
+    required this.gioiTinh,
     required this.yeuThich,
   });
 }

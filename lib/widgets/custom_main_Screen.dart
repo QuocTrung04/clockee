@@ -1,24 +1,34 @@
 //import '../screens/account_screen.dart';
+import 'dart:isolate';
+
+import 'package:clockee/models/sanpham.dart';
+import 'package:clockee/screens/account_information_screen.dart';
+import 'package:clockee/screens/favorite_screen.dart';
 import 'package:clockee/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/account_screen.dart';
 import 'custom_app_bar.dart';
 import 'package:iconify_design/iconify_design.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:clockee/data/data.dart';
 
 class CustomMainScreen extends StatefulWidget {
   const CustomMainScreen({super.key});
+
   @override
   State<CustomMainScreen> createState() => _CustomMainScreenState();
 }
+
+bool isLoggedIn = true;
 
 class _CustomMainScreenState extends State<CustomMainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screen = [
     const HomeScreen(),
-    const Center(child: Text('Favorite Screen')),
-    const AccountScreen(),
+    const FavoriteScreen(),
+    //const AccountScreen(),
+    isLoggedIn ? const AccountInformationScreen() : const AccountScreen(),
   ];
   @override
   Widget build(BuildContext context) {

@@ -95,9 +95,15 @@ class _SlideMenuState extends State<MenuScreen>
                   ),
 
                   const SizedBox(height: 20),
-                  _menuItem('THƯƠNG HIỆU', () {}),
-                  _menuItem('ĐỒNG HỒ ĐEO TAY', () {}),
-                  _menuItem('ĐỒNG HỒ TRANG TRÍ', () {}),
+                  _menuItem('THƯƠNG HIỆU', () {
+                    print("đây là thương hiệu");
+                  }),
+                  _menuItem('ĐỒNG HỒ ĐEO TAY', () {
+                    print("Đây là đồng hồ đeo tay");
+                  }),
+                  _menuItem('ĐỒNG HỒ TRANG TRÍ', () {
+                    print("đây là đồng hồ trang trí");
+                  }),
                 ],
               ),
             ),

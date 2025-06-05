@@ -249,7 +249,9 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                   top: 8,
                   right: 8,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      print('them yeu thich');
+                    },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       padding: const EdgeInsets.all(6),
@@ -293,7 +295,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             overflow: TextOverflow.ellipsis,
-            maxLines: 2,
+            maxLines: 1,
           ),
           const SizedBox(height: 4),
           Text(

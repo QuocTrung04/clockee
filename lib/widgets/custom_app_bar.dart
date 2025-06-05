@@ -24,7 +24,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       ),
       child: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xFFFFFFFF),
+        backgroundColor: const Color(0xFFF3F3F3),
         centerTitle: true,
         toolbarHeight: 60,
         title: Row(
