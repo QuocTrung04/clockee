@@ -1,3 +1,4 @@
+import 'package:clockee/screens/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 import 'address_screen.dart';
@@ -80,14 +81,26 @@ class AccountInformationScreen extends StatelessWidget {
                   _buildMenuItem(
                     Icons.shopping_bag,
                     'Thông tin tài khoản',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfileScreen(),
+                        ),
+                      );
+                    },
                   ),
                   _buildMenuItem(Icons.shopping_bag, 'Đơn hàng', onTap: () {}),
                   _buildMenuItem(
                     Icons.location_on,
                     'Địa chỉ',
                     onTap: () {
-                      showSlideAddress(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddressScreen(),
+                        ),
+                      );
                     },
                   ),
                   _buildMenuItem(Icons.help_outline, 'Hỗ trợ', onTap: () {}),
@@ -138,17 +151,4 @@ class AccountInformationScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-void showSlideAddress(BuildContext context) {
-  late OverlayEntry overlay;
-  overlay = OverlayEntry(
-    builder: (context) => AddressScreen(
-      onClose: () {
-        overlay.remove();
-      },
-    ),
-  );
-
-  Overlay.of(context).insert(overlay);
 }

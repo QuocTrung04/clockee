@@ -65,7 +65,7 @@ final List<CartItem> cartItems = [
 
 final List<Address> address = [
   Address(
-    name: 'Quốc Trung',
+    name: 'Hoàng Tiến',
     phone: '0392469847',
     province: 'TP. Hồ Chí Minh',
     district: 'Quận Gò Vấp',
