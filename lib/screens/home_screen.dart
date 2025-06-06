@@ -16,6 +16,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ValueNotifier<String> gioitinhNotifier = ValueNotifier<String>('nam');
+
+  @override
+  void dispose() {
+    gioitinhNotifier.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -103,24 +111,37 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: GenderStatusButtons(),
+            child: GenderStatusButtons(gioitinhNotifier: gioitinhNotifier),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return GridView.builder(
-                  itemCount: sanpham.length,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 0.5,
-                  ),
-                  itemBuilder: (context, index) {
-                    return SanPhamWidget(sanPham: sanpham[index]);
+                return ValueListenableBuilder(
+                  valueListenable: gioitinhNotifier,
+                  builder: (context, gioiTinh, _) {
+                    final sanPhamLoc = sanpham
+                        .where(
+                          (sp) =>
+                              sp.gioiTinh.toLowerCase() ==
+                              gioiTinh.toLowerCase(),
+                        )
+                        .toList();
+                    return GridView.builder(
+                      itemCount: sanPhamLoc.length,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 0.5,
+                          ),
+                      itemBuilder: (context, index) {
+                        return SanPhamWidget(sanPham: sanPhamLoc[index]);
+                      },
+                    );
                   },
                 );
               },
@@ -172,7 +193,8 @@ void showSlideCart(BuildContext context) {
 }
 
 class GenderStatusButtons extends StatefulWidget {
-  const GenderStatusButtons({super.key});
+  final ValueNotifier<String> gioitinhNotifier;
+  const GenderStatusButtons({super.key, required this.gioitinhNotifier});
   @override
   GenderStatusButtonsState createState() => GenderStatusButtonsState();
 }
@@ -192,6 +214,7 @@ class GenderStatusButtonsState extends State<GenderStatusButtons> {
             onTap: () {
               setState(() {
                 selected = 'nam';
+                widget.gioitinhNotifier.value = 'nam';
               });
             },
             child: AnimatedContainer(
@@ -218,6 +241,7 @@ class GenderStatusButtonsState extends State<GenderStatusButtons> {
             onTap: () {
               setState(() {
                 selected = 'nu';
+                widget.gioitinhNotifier.value = 'nu';
               });
             },
             child: AnimatedContainer(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 import 'package:badges/badges.dart' as badges;
 import '../screens/home_screen.dart';
+import '../data/data.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -14,6 +15,14 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
+  int tinhSoLuong() {
+    int soluong = 0;
+    for (var itemsl in cartItems) {
+      soluong += itemsl.soLuong;
+    }
+    return soluong;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -65,8 +74,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   ),
                   const SizedBox(width: 5),
                   badges.Badge(
-                    badgeContent: const Text(
-                      '2',
+                    badgeContent: Text(
+                      '${tinhSoLuong()}',
                       style: TextStyle(color: Colors.white),
                     ),
                     child: IconButton(

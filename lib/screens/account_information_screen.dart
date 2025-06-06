@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:iconify_design/iconify_design.dart'; // ✅ Giữ nguyên package của bạn
+import 'package:iconify_design/iconify_design.dart';
+import 'address_screen.dart';
 
 class AccountInformationScreen extends StatelessWidget {
   const AccountInformationScreen({super.key});
@@ -82,7 +83,13 @@ class AccountInformationScreen extends StatelessWidget {
                     onTap: () {},
                   ),
                   _buildMenuItem(Icons.shopping_bag, 'Đơn hàng', onTap: () {}),
-                  _buildMenuItem(Icons.location_on, 'Địa chỉ', onTap: () {}),
+                  _buildMenuItem(
+                    Icons.location_on,
+                    'Địa chỉ',
+                    onTap: () {
+                      showSlideAddress(context);
+                    },
+                  ),
                   _buildMenuItem(Icons.help_outline, 'Hỗ trợ', onTap: () {}),
                   _buildMenuItem(
                     Icons.logout,
@@ -131,4 +138,17 @@ class AccountInformationScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+void showSlideAddress(BuildContext context) {
+  late OverlayEntry overlay;
+  overlay = OverlayEntry(
+    builder: (context) => AddressScreen(
+      onClose: () {
+        overlay.remove();
+      },
+    ),
+  );
+
+  Overlay.of(context).insert(overlay);
 }

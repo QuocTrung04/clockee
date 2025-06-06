@@ -48,6 +48,10 @@ class _CartItemScreenState extends State<CartItemScreen>
         color: Colors.black87,
         child: Stack(
           children: [
+            GestureDetector(
+              onTap: _closeSlideCart,
+              child: Container(color: Colors.transparent),
+            ),
             SlideTransition(
               position: _slideAnimation,
               child: Align(
