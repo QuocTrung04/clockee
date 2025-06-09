@@ -14,14 +14,14 @@ class CustomMainScreen extends StatefulWidget {
   State<CustomMainScreen> createState() => _CustomMainScreenState();
 }
 
-bool isLoggedIn = true;
+bool isLoggedIn = false;
 
 class _CustomMainScreenState extends State<CustomMainScreen> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
 
   final List<Widget> _screen = [
-    const HomeScreen(),
     const FavoriteScreen(),
+    const HomeScreen(),
     //const AccountScreen(),
     isLoggedIn ? const AccountInformationScreen() : const AccountScreen(),
   ];
@@ -38,8 +38,8 @@ class _CustomMainScreenState extends State<CustomMainScreen> {
         animationCurve: Curves.linear,
         animationDuration: const Duration(milliseconds: 300),
         items: const [
-          IconifyIcon(icon: 'iconoir:home', color: Color(0xFF662D91)),
           IconifyIcon(icon: 'iconoir:heart', color: Color(0xFF662D91)),
+          IconifyIcon(icon: 'iconoir:home', color: Color(0xFF662D91)),
           IconifyIcon(icon: 'line-md:account', color: Color(0xFF662D91)),
         ],
         onTap: (index) {

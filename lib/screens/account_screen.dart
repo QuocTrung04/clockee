@@ -57,7 +57,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                 ),
                 child: Text(
-                  'Login',
+                  'Đăng nhập',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -88,7 +88,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                 ),
                 child: Text(
-                  'Sing In',
+                  'Đăng ký',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,

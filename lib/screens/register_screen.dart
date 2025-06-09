@@ -57,7 +57,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'REGISTER',
+                            'ĐĂNG KÝ',
                             style: TextStyle(
                               fontSize: 40,
                               color: Colors.white,
@@ -115,7 +115,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                       ),
                                       child: TextField(
                                         decoration: InputDecoration(
-                                          hintText: "User Name",
+                                          hintText: "Tài khoản",
                                           hintStyle: TextStyle(
                                             color: Colors.grey,
                                           ),
@@ -141,7 +141,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                       ),
                                       child: TextField(
                                         decoration: InputDecoration(
-                                          hintText: "Email or Phone Number",
+                                          hintText: "Email",
                                           hintStyle: TextStyle(
                                             color: Colors.grey,
                                           ),
@@ -168,7 +168,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                       child: TextField(
                                         obscureText: _password,
                                         decoration: InputDecoration(
-                                          hintText: "Password",
+                                          hintText: "Mật khẩu",
                                           hintStyle: TextStyle(
                                             color: Colors.grey,
                                           ),
@@ -200,7 +200,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                       child: TextField(
                                         obscureText: _confirmpassword,
                                         decoration: InputDecoration(
-                                          hintText: "Confirm Password",
+                                          hintText: "Nhập lại mật khẩu",
                                           hintStyle: TextStyle(
                                             color: Colors.grey,
                                           ),
@@ -247,7 +247,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                     ),
                                   ),
                                   child: Text(
-                                    'Sing in',
+                                    'Đăng nhập',
                                     style: TextStyle(
                                       color: Colors.grey.shade400,
                                     ),
@@ -271,7 +271,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                       ),
                                     ),
                                     child: Text(
-                                      'Sing Up',
+                                      'Đăng ký',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,

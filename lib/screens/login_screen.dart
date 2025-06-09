@@ -56,7 +56,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'LOGIN',
+                            'ĐĂNG NHẬP',
                             style: TextStyle(
                               fontSize: 40,
                               color: Colors.white,
@@ -114,7 +114,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                                       ),
                                       child: TextField(
                                         decoration: InputDecoration(
-                                          hintText: "Email or Phone Number",
+                                          hintText: "Tài khoản",
                                           hintStyle: TextStyle(
                                             color: Colors.grey,
                                           ),
@@ -134,7 +134,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                                       child: TextField(
                                         obscureText: _obscure,
                                         decoration: InputDecoration(
-                                          hintText: "Password",
+                                          hintText: "Mật khẩu",
                                           hintStyle: TextStyle(
                                             color: Colors.grey,
                                           ),
@@ -177,7 +177,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                                         ),
                                       ),
                                       child: Text(
-                                        'Forgot Password?',
+                                        'Quên mật khẩu?',
                                         style: TextStyle(
                                           color: Colors.grey.shade400,
                                         ),
@@ -204,7 +204,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                                         ),
                                       ),
                                       child: Text(
-                                        'Create Account',
+                                        'Tạo tài khoản',
                                         style: TextStyle(
                                           color: Colors.grey.shade400,
                                         ),
@@ -229,7 +229,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                                       ),
                                     ),
                                     child: Text(
-                                      'Sing Up',
+                                      'Đăng nhập',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,
