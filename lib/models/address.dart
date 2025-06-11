@@ -13,4 +13,12 @@ class Address {
     required this.district,
     required this.street,
   });
+  factory Address.fromJson(Map<String, dynamic> json) => Address(
+    name: json['name'],
+    phone: json['phone'],
+    province: json['province'],
+    wards: json['wards'],
+    district: json['district'],
+    street: json['street'],
+  );
 }

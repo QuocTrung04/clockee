@@ -1,5 +1,7 @@
 import 'package:clockee/screens/edit_profile_screen.dart';
+import 'package:clockee/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:iconify_design/iconify_design.dart';
 import 'address_screen.dart';
 
@@ -85,7 +87,7 @@ class AccountInformationScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditProfileScreen(),
+                          builder: (context) => ProfileScreen(),
                         ),
                       );
                     },

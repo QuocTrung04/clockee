@@ -14,7 +14,7 @@ class CustomMainScreen extends StatefulWidget {
   State<CustomMainScreen> createState() => _CustomMainScreenState();
 }
 
-bool isLoggedIn = false;
+bool isLoggedIn = true;
 
 class _CustomMainScreenState extends State<CustomMainScreen> {
   int _currentIndex = 1;

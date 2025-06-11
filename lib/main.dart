@@ -1,5 +1,6 @@
 import 'package:clockee/screens/add_adress_screen.dart';
 import 'package:clockee/screens/edit_adress_screen.dart';
+import 'package:clockee/screens/product_details_screen.dart';
 import 'package:clockee/widgets/custom_main_screen.dart';
 import 'package:flutter/material.dart';
 
