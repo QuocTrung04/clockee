@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SupportScreen extends StatelessWidget {
   final String phoneNumber = '0392469847';
-  final String facebookUrl = 'https://www.facebook.com';
+  final String facebookUrl = 'https://www.facebook.com/quoc.trung.91885';
   final String zaloUrl = 'https://zalo.me/0392469847';
   const SupportScreen({super.key});
 
