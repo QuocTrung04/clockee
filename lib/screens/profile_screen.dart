@@ -1,3 +1,4 @@
+import 'package:clockee/screens/change_password_screen.dart';
 import 'package:clockee/screens/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -78,7 +79,14 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         SizedBox(width: 8),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChangePasswordScreen(),
+                              ),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),

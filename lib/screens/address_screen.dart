@@ -1,5 +1,4 @@
 import 'package:clockee/data/data.dart';
-import 'package:clockee/models/address.dart';
 import 'package:clockee/screens/add_adress_screen.dart';
 import 'package:clockee/screens/edit_adress_screen.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +36,10 @@ class _AddressScreenState extends State<AddressScreen> {
                     ),
                   ),
                   SizedBox(width: 30),
-                  Text('Địa Chỉ', style: TextStyle(fontSize: 20)),
+                  Text(
+                    'Địa Chỉ',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  ),
                 ],
               ),
             ),
