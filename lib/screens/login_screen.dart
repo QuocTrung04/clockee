@@ -1,7 +1,11 @@
+import 'package:clockee/screens/home_screen.dart';
 import 'package:clockee/screens/register_screen.dart';
+import 'package:clockee/services/api_service.dart';
+import 'package:clockee/widgets/custom_main_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,7 +14,16 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _StateLoginScreen extends State<LoginScreen> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final RegExp validPassword = RegExp(
+    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~]).{1,6}$',
+  );
+  String _errorMessage = '';
+  final RegExp validCharacters = RegExp(r'^[a-zA-Z0-9]+$');
+  bool isLoggedIn = false;
   bool _obscure = true;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -113,6 +126,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                                         ),
                                       ),
                                       child: TextField(
+                                        controller: _usernameController,
                                         decoration: InputDecoration(
                                           hintText: "Tài khoản",
                                           hintStyle: TextStyle(
@@ -133,6 +147,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                                       decoration: BoxDecoration(),
                                       child: TextField(
                                         obscureText: _obscure,
+                                        controller: _passwordController,
                                         decoration: InputDecoration(
                                           hintText: "Mật khẩu",
                                           hintStyle: TextStyle(
@@ -214,11 +229,59 @@ class _StateLoginScreen extends State<LoginScreen> {
                                 ],
                               ),
                               SizedBox(height: 40),
+                              if (_errorMessage.isNotEmpty)
+                                Text(
+                                  _errorMessage,
+                                  style: TextStyle(color: Colors.red),
+                                ),
                               SizedBox(
                                 width: 230,
                                 height: 50,
                                 child: GestureDetector(
-                                  onTap: () {},
+                                  onTap: () async {
+                                    final username = _usernameController.text
+                                        .trim();
+                                    final password = _passwordController.text
+                                        .trim();
+
+                                    if (username.isEmpty || password.isEmpty) {
+                                      setState(() {
+                                        _errorMessage =
+                                            'Vui lòng nhập đầy đủ thông tin';
+                                      });
+                                      return;
+                                    }
+
+                                    final success = await ApiService.login(
+                                      username,
+                                      password,
+                                    );
+
+                                    if (!mounted) return;
+
+                                    if (success) {
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      await prefs.setBool('isLoggedIn', true);
+
+                                      if (!mounted) return;
+
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const CustomMainScreen(),
+                                        ),
+                                        (route) => false,
+                                      );
+                                    } else {
+                                      setState(() {
+                                        _errorMessage =
+                                            'Tài khoản hoặc mật khẩu sai';
+                                      });
+                                    }
+                                  },
+
                                   child: Container(
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:clockee/screens/cart_item_screen.dart';
 import 'package:clockee/screens/product_details_screen.dart';
 import 'package:clockee/screens/search_screen.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 import '../data/data.dart';
@@ -17,7 +18,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ValueNotifier<String> gioitinhNotifier = ValueNotifier<String>('nam');
+  final ValueNotifier<int> gioitinhNotifier = ValueNotifier<int>(1);
+
+  List<Product> allProducts = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadProducts();
+  }
+
+  void loadProducts() async {
+    try {
+      final products = await ApiService.fetchProducts();
+      print('Sản phẩm từ API: ${products.length}');
+      for (var p in products) {
+        print('${p.name} - ${p.sex}');
+      }
+
+      setState(() {
+        allProducts = products;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Lỗi tải sản phẩm: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -121,13 +148,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 return ValueListenableBuilder(
                   valueListenable: gioitinhNotifier,
                   builder: (context, gioiTinh, _) {
-                    final sanPhamLoc = sanpham
-                        .where(
-                          (sp) =>
-                              sp.gioiTinh.toLowerCase() ==
-                              gioiTinh.toLowerCase(),
-                        )
+                    final sanPhamLoc = allProducts
+                        .where((sp) => sp.sex == gioiTinh)
                         .toList();
+
                     return GridView.builder(
                       itemCount: sanPhamLoc.length,
                       shrinkWrap: true,
@@ -137,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
-                            childAspectRatio: 0.5,
+                            childAspectRatio: 0.57,
                           ),
                       itemBuilder: (context, index) {
                         return SanPhamWidget(sanPham: sanPhamLoc[index]);
@@ -194,7 +218,7 @@ void showSlideCart(BuildContext context) {
 }
 
 class GenderStatusButtons extends StatefulWidget {
-  final ValueNotifier<String> gioitinhNotifier;
+  final ValueNotifier<int> gioitinhNotifier;
   const GenderStatusButtons({super.key, required this.gioitinhNotifier});
   @override
   GenderStatusButtonsState createState() => GenderStatusButtonsState();
@@ -215,7 +239,7 @@ class GenderStatusButtonsState extends State<GenderStatusButtons> {
             onTap: () {
               setState(() {
                 selected = 'nam';
-                widget.gioitinhNotifier.value = 'nam';
+                widget.gioitinhNotifier.value = 1;
               });
             },
             child: AnimatedContainer(
@@ -242,7 +266,7 @@ class GenderStatusButtonsState extends State<GenderStatusButtons> {
             onTap: () {
               setState(() {
                 selected = 'nu';
-                widget.gioitinhNotifier.value = 'nu';
+                widget.gioitinhNotifier.value = 0;
               });
             },
             child: AnimatedContainer(
@@ -269,7 +293,7 @@ class GenderStatusButtonsState extends State<GenderStatusButtons> {
 }
 
 class SanPhamWidget extends StatefulWidget {
-  final SanPham sanPham;
+  final Product sanPham;
 
   const SanPhamWidget({super.key, required this.sanPham});
 
@@ -282,12 +306,12 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProductDetailScreen(sanpham: widget.sanPham),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => ProductDetailScreen(sanpham: widget.sanPham),
+        //   ),
+        // );
       },
       child: Card(
         color: const Color(0xFFFFFFFF),
@@ -301,10 +325,13 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: Image.network(
-                      widget.sanPham.imageUrl,
-                      width: double.infinity,
-                      fit: BoxFit.contain,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Image.network(
+                        widget.sanPham.imageUrl,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                   Positioned(
@@ -320,15 +347,15 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          boxShadow: widget.sanPham.yeuThich
-                              ? [
-                                  BoxShadow(
-                                    color: Colors.purple.shade100,
-                                    blurRadius: 8,
-                                    spreadRadius: 2,
-                                  ),
-                                ]
-                              : [],
+                          // boxShadow: widget.sanPham.yeuThich
+                          //     ? [
+                          //         BoxShadow(
+                          //           color: Colors.purple.shade100,
+                          //           blurRadius: 8,
+                          //           spreadRadius: 2,
+                          //         ),
+                          //       ]
+                          //     : [],
                         ),
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 300),
@@ -339,10 +366,10 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             );
                           },
                           child: IconifyIcon(
-                            key: ValueKey(widget.sanPham.yeuThich),
-                            icon: widget.sanPham.yeuThich
-                                ? 'iconoir:heart-solid'
-                                : 'iconoir:heart',
+                            // key: ValueKey(widget.sanPham.yeuThich),
+                            // icon: widget.sanPham.yeuThich
+                            //     ? 'iconoir:heart-solid'
+                            icon: 'iconoir:heart',
                             color: const Color(0xFF662D91),
                           ),
                         ),
@@ -352,30 +379,31 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                 ],
               ),
             ),
+            SizedBox(height: 5),
             Text(
-              widget.sanPham.tenSanPham,
+              widget.sanPham.name,
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 10),
             Text(
-              widget.sanPham.maSanPham,
+              widget.sanPham.watchModel,
               style: const TextStyle(
                 color: Color(0xFF662D91),
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             Text(
-              widget.sanPham.moTa,
+              '${widget.sanPham.faceSize} | ${widget.sanPham.typeName}',
               style: const TextStyle(fontSize: 12, color: Color(0xFF662D91)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
             Text(
-              'Giá ${_formatCurrency(widget.sanPham.donGia)}đ',
+              'Giá ${_formatCurrency(widget.sanPham.actualPrice)}đ',
               style: const TextStyle(
                 color: Color(0xFF662D91),
                 fontWeight: FontWeight.bold,

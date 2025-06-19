@@ -1,7 +1,10 @@
+import 'package:clockee/screens/login_screen.dart';
 import 'package:clockee/screens/profile_screen.dart';
 import 'package:clockee/screens/support_screen.dart';
+import 'package:clockee/widgets/custom_main_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'address_screen.dart';
 
 class AccountInformationScreen extends StatelessWidget {
@@ -25,7 +28,6 @@ class AccountInformationScreen extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
 
-              // Avatar - đè ra ngoài ảnh
               Positioned(
                 bottom: 10,
                 left: 16,
@@ -120,7 +122,21 @@ class AccountInformationScreen extends StatelessWidget {
                     Icons.logout,
                     'Đăng xuất',
                     isLogout: true,
-                    onTap: () {},
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.remove(
+                        'isLoggedIn',
+                      ); // hoặc: await prefs.setBool('isLoggedIn', false);
+
+                      // Quay lại màn hình đăng nhập và xoá các màn hình khác khỏi ngăn xếp
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CustomMainScreen(),
+                        ),
+                        (route) => false,
+                      );
+                    },
                   ),
                   const SizedBox(height: 16),
                 ],

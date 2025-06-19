@@ -67,7 +67,6 @@ class EditProfileScreen extends StatelessWidget {
               ),
               _buildTextField(label: 'Email', border: border),
               _buildTextField(label: 'Giới Tính', border: border),
-              _buildTextField(label: 'Đường', border: border),
 
               const SizedBox(height: 100),
             ],

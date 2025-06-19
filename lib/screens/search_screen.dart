@@ -77,11 +77,6 @@ class _SearchScreenState extends State<SearchScreen>
                   'TÌM KIẾM GẦN ĐÂY',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
-                SizedBox(height: 70),
-                Text(
-                  'TÌM KIẾM PHỔ BIẾN',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ),
               ],
             ),
           ),
