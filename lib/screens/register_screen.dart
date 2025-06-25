@@ -1,4 +1,5 @@
 import 'package:clockee/screens/login_screen.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:iconify_design/iconify_design.dart';
@@ -12,6 +13,59 @@ class RegisterScreen extends StatefulWidget {
 class _StateRegisterScreen extends State<RegisterScreen> {
   bool _password = true;
   bool _confirmpassword = true;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _corfirmPasswordController =
+      TextEditingController();
+  Future<void> _dangKy() async {
+    if (_passwordController.text != _corfirmPasswordController.text) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Mật khẩu không khớp')));
+      return;
+    }
+
+    final success = await ApiService.registerUser(
+      name: _nameController.text,
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+
+    if (!mounted) {
+      return;
+    }
+    print(success);
+    if (success) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Thành công'),
+          content: Text('Đăng ký thành công! Vui lòng đăng nhập.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // đóng dialog
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
+              },
+              child: Text('Đồng ý'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Đăng ký thất bại'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -114,6 +168,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                         ),
                                       ),
                                       child: TextField(
+                                        controller: _nameController,
                                         decoration: InputDecoration(
                                           hintText: "Tài khoản",
                                           hintStyle: TextStyle(
@@ -140,6 +195,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                         ),
                                       ),
                                       child: TextField(
+                                        controller: _emailController,
                                         decoration: InputDecoration(
                                           hintText: "Email",
                                           hintStyle: TextStyle(
@@ -166,6 +222,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                         ),
                                       ),
                                       child: TextField(
+                                        controller: _passwordController,
                                         obscureText: _password,
                                         decoration: InputDecoration(
                                           hintText: "Mật khẩu",
@@ -198,6 +255,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                     Container(
                                       padding: EdgeInsets.all(10),
                                       child: TextField(
+                                        controller: _corfirmPasswordController,
                                         obscureText: _confirmpassword,
                                         decoration: InputDecoration(
                                           hintText: "Nhập lại mật khẩu",
@@ -260,7 +318,9 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                 width: 230,
                                 height: 50,
                                 child: GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    _dangKy();
+                                  },
                                   child: Container(
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(

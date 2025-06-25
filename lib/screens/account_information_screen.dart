@@ -1,14 +1,58 @@
+import 'dart:ui';
+
+import 'package:clockee/models/user.dart';
 import 'package:clockee/screens/login_screen.dart';
 import 'package:clockee/screens/profile_screen.dart';
 import 'package:clockee/screens/support_screen.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:clockee/widgets/custom_main_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'address_screen.dart';
 
-class AccountInformationScreen extends StatelessWidget {
+class AccountInformationScreen extends StatefulWidget {
   const AccountInformationScreen({super.key});
+
+  @override
+  State<AccountInformationScreen> createState() =>
+      _AccountInformationScreenState();
+}
+
+class _AccountInformationScreenState extends State<AccountInformationScreen> {
+  int? userId;
+  String? _displayName;
+  @override
+  void initState() {
+    super.initState();
+    _loadUserid();
+  }
+
+  Future<void> _loadUserid() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = prefs.getInt('userid');
+    if (!mounted) return;
+
+    if (id == null) {
+      debugPrint('User ID not found');
+      return;
+    }
+
+    try {
+      final user = await ApiService.fetchUser(id); // <-- chờ API
+      if (!mounted) return;
+      setState(() {
+        userId = id;
+        _displayName = user.name;
+        // <-- gán xong mới update UI
+      });
+      debugPrint(
+        "Fetched displayName: $_displayName",
+      ); // <-- giờ _displayName đã có giá trị
+    } catch (e) {
+      debugPrint('Error fetching user: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +89,8 @@ class AccountInformationScreen extends StatelessWidget {
               Positioned(
                 bottom: 20,
                 left: 120,
-                child: const Text(
-                  'Quốc Trung',
+                child: Text(
+                  _displayName ?? "ọt ọt",
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,
@@ -65,7 +109,6 @@ class AccountInformationScreen extends StatelessWidget {
             ],
           ),
 
-          // Phần dưới: nội dung thông tin tài khoản
           Expanded(
             child: Container(
               width: double.infinity,
@@ -123,19 +166,43 @@ class AccountInformationScreen extends StatelessWidget {
                     'Đăng xuất',
                     isLogout: true,
                     onTap: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.remove(
-                        'isLoggedIn',
-                      ); // hoặc: await prefs.setBool('isLoggedIn', false);
-
-                      // Quay lại màn hình đăng nhập và xoá các màn hình khác khỏi ngăn xếp
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CustomMainScreen(),
+                      final shouldLogout = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Xác nhận đăng xuất'),
+                          content: Text(
+                            'Bạn có chắc chắn muốn đăng xuất không?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(context, false), // Huỷ
+                              child: Text('Huỷ'),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(context, true), // Đồng ý
+                              child: Text(
+                                'Đăng xuất',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
                         ),
-                        (route) => false,
                       );
+
+                      if (shouldLogout == true) {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.clear();
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CustomMainScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      }
                     },
                   ),
                   const SizedBox(height: 16),
@@ -152,7 +219,7 @@ class AccountInformationScreen extends StatelessWidget {
     IconData icon,
     String title, {
     bool isLogout = false,
-    VoidCallback? onTap, // <-- thêm callback
+    VoidCallback? onTap,
   }) {
     return Material(
       color: Colors.transparent,

@@ -43,10 +43,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      showSlideMenu(context);
+                      showSlideSearch(context);
                     },
                     icon: const IconifyIcon(
-                      icon: 'ri:menu-2-line',
+                      icon: 'ic:round-search',
                       color: Color(0xFF662D91),
                     ),
                   ),
@@ -63,15 +63,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  IconButton(
-                    onPressed: () {
-                      showSlideSearch(context);
-                    },
-                    icon: const IconifyIcon(
-                      icon: 'ic:round-search',
-                      color: Color(0xFF662D91),
-                    ),
-                  ),
                   const SizedBox(width: 5),
                   badges.Badge(
                     badgeContent: Text(

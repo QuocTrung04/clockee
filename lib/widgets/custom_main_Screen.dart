@@ -1,5 +1,7 @@
 import 'package:clockee/screens/account_information_screen.dart';
+import 'package:clockee/screens/favorite_screen.dart';
 import 'package:clockee/screens/home_screen.dart';
+import 'package:clockee/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/account_screen.dart';
@@ -35,8 +37,58 @@ class _CustomMainScreenState extends State<CustomMainScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> screen = [
-      //const FavoriteScreen(),
-      Center(child: Text('data')),
+      _isLoggedIn
+          ? const FavoriteScreen()
+          : Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Bạn Chưa Đăng Nhập',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF662D91),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    width: 230,
+                    height: 50,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            colors: [Colors.purple, Colors.pink],
+                          ),
+                        ),
+                        child: Text(
+                          'Đăng nhập',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+      // Center(child: Text('data')),
       const HomeScreen(),
       _isLoggedIn ? const AccountInformationScreen() : const AccountScreen(),
     ];

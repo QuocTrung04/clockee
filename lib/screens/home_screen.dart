@@ -6,6 +6,7 @@ import 'package:clockee/screens/search_screen.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/data.dart';
 import '../models/sanpham.dart';
 import '../screens/menu_screen.dart';
@@ -18,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int? userID;
   final ValueNotifier<int> gioitinhNotifier = ValueNotifier<int>(1);
 
   List<Product> allProducts = [];
@@ -26,12 +28,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    _loadUserid();
+  }
+
+  Future<void> _loadUserid() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+
+    setState(() {
+      userID = prefs.getInt('userid');
+    });
+
+    // Gọi loadProducts sau khi có userID
     loadProducts();
   }
 
   void loadProducts() async {
     try {
-      final products = await ApiService.fetchProducts();
+      final products = await ApiService.fetchProducts(userID ?? 0);
+      print('ĐÂY LÀ ID 🫵: $userID');
       print('Sản phẩm từ API: ${products.length}');
       for (var p in products) {
         print('${p.name} - ${p.sex}');
@@ -178,19 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-void showSlideMenu(BuildContext context) {
-  late OverlayEntry overlay;
-  overlay = OverlayEntry(
-    builder: (context) => MenuScreen(
-      onClose: () {
-        overlay.remove();
-      },
-    ),
-  );
-
-  Overlay.of(context).insert(overlay);
-}
-
 void showSlideSearch(BuildContext context) {
   late OverlayEntry overlay;
   overlay = OverlayEntry(
@@ -312,6 +315,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
         //     builder: (context) => ProductDetailScreen(sanpham: widget.sanPham),
         //   ),
         // );
+        print(widget.sanPham.productId);
       },
       child: Card(
         color: const Color(0xFFFFFFFF),
@@ -347,15 +351,15 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          // boxShadow: widget.sanPham.yeuThich
-                          //     ? [
-                          //         BoxShadow(
-                          //           color: Colors.purple.shade100,
-                          //           blurRadius: 8,
-                          //           spreadRadius: 2,
-                          //         ),
-                          //       ]
-                          //     : [],
+                          boxShadow: widget.sanPham.favorite == 1
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.purple.shade100,
+                                    blurRadius: 8,
+                                    spreadRadius: 2,
+                                  ),
+                                ]
+                              : [],
                         ),
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 300),
@@ -366,10 +370,11 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             );
                           },
                           child: IconifyIcon(
-                            // key: ValueKey(widget.sanPham.yeuThich),
-                            // icon: widget.sanPham.yeuThich
-                            //     ? 'iconoir:heart-solid'
-                            icon: 'iconoir:heart',
+                            key: ValueKey(widget.sanPham.favorite),
+                            icon: widget.sanPham.favorite == 1
+                                ? 'iconoir:heart-solid'
+                                : 'iconoir:heart',
+
                             color: const Color(0xFF662D91),
                           ),
                         ),

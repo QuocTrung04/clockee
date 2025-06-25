@@ -19,7 +19,6 @@ class _StateLoginScreen extends State<LoginScreen> {
   final RegExp validPassword = RegExp(
     r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~]).{1,6}$',
   );
-  String _errorMessage = '';
   final RegExp validCharacters = RegExp(r'^[a-zA-Z0-9]+$');
   bool isLoggedIn = false;
   bool _obscure = true;
@@ -229,11 +228,6 @@ class _StateLoginScreen extends State<LoginScreen> {
                                 ],
                               ),
                               SizedBox(height: 40),
-                              if (_errorMessage.isNotEmpty)
-                                Text(
-                                  _errorMessage,
-                                  style: TextStyle(color: Colors.red),
-                                ),
                               SizedBox(
                                 width: 230,
                                 height: 50,
@@ -246,8 +240,16 @@ class _StateLoginScreen extends State<LoginScreen> {
 
                                     if (username.isEmpty || password.isEmpty) {
                                       setState(() {
-                                        _errorMessage =
-                                            'Vui lòng nhập đầy đủ thông tin';
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Vui lòng nhập đầy đủ thông tin',
+                                            ),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
                                       });
                                       return;
                                     }
@@ -276,8 +278,16 @@ class _StateLoginScreen extends State<LoginScreen> {
                                       );
                                     } else {
                                       setState(() {
-                                        _errorMessage =
-                                            'Tài khoản hoặc mật khẩu sai';
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Tài khoản hoặc mật khẩu sai',
+                                            ),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
                                       });
                                     }
                                   },

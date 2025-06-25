@@ -28,6 +28,7 @@ class Product {
   final int sex;
   final String watchModel;
   final String typeName;
+  final int favorite;
 
   Product({
     required this.productId,
@@ -59,6 +60,7 @@ class Product {
     required this.sex,
     required this.watchModel,
     required this.typeName,
+    required this.favorite,
   });
 
   // JSON => Dart
@@ -93,6 +95,7 @@ class Product {
       sex: json['Sex'],
       watchModel: json['Watch_model'],
       typeName: json['Type_name'],
+      favorite: json['favorite'] ?? 0,
     );
   }
 
@@ -127,6 +130,7 @@ class Product {
       'sex': sex,
       'Watch_model': watchModel,
       'Type_name': typeName,
+      'favorite': favorite,
     };
   }
 }
