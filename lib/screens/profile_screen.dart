@@ -17,7 +17,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _birthdayController = TextEditingController();
-  int _selectedGender = 1;
+  int? _selectedGender;
 
   User? _user;
   bool _loading = true;
@@ -52,10 +52,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       setState(() {
         _user = user;
-        _nameController.text = user.name;
-        _emailController.text = user.email;
-        _phoneController.text = user.phone;
-        _birthdayController.text = formatDate(user.birthday);
+        _nameController.text = user.name ?? "";
+        _emailController.text = user.email ?? "";
+        _phoneController.text = user.phone ?? "";
+        _birthdayController.text = user.birthday != null
+            ? formatDate(user.birthday!)
+            : '';
+
         _selectedGender = user.sex;
         _loading = false;
       });
@@ -142,7 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   birthday: DateTime.parse(
                                     _birthdayController.text,
                                   ),
-                                  sex: _selectedGender,
+                                  sex: _selectedGender ?? 1,
                                 );
                                 if (!mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -235,6 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         TextField(
           controller: controller,
           decoration: InputDecoration(
+            hintText: controller.text.isEmpty ? 'Nhập $label...' : null,
             border: UnderlineInputBorder(),
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
@@ -262,17 +266,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         DropdownButton<int>(
           value: _selectedGender,
+          hint: Text('Chọn giới tính'), // Hiển thị nếu giá trị null
           items: [
             DropdownMenuItem(child: Text("Nam"), value: 1),
             DropdownMenuItem(child: Text("Nữ"), value: 0),
           ],
           onChanged: (value) {
-            if (value != null) {
-              setState(() {
-                _selectedGender = value;
-              });
-              print('day la gioi tinh: $_selectedGender');
-            }
+            setState(() {
+              _selectedGender = value;
+            });
+            print('Đây là giới tính: $_selectedGender');
           },
         ),
         SizedBox(height: 12),

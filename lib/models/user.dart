@@ -48,15 +48,15 @@
 
 class User {
   final int userId;
-  final String email;
-  final String name;
-  final String phone;
+  final String? email;
+  final String? name;
+  final String? phone;
   final String password;
   final String userName;
-  final int isAdmin;
-  final DateTime birthday;
-  final int sex;
-  final int isDelete;
+  final int? isAdmin;
+  final DateTime? birthday;
+  final int? sex;
+  final int? isDelete;
 
   User({
     required this.userId,
@@ -74,20 +74,23 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       userId: json['User_id'] as int,
-      email: json['Email'] as String,
-      name: json['Name'] as String,
-      phone: json['Phone'] as String,
+      email: json['Email'] as String?,
+      name: json['Name'] as String?,
+      phone: json['Phone'] as String?,
       password: json['Password'] as String,
       userName: json['Username'] as String,
-      isAdmin: json['Is_admin'] is int
-          ? json['Is_admin'] as int
-          : int.parse(json['Is_admin'].toString()),
-      birthday: DateTime.parse(json['Birthday'] as String),
-      sex: json['Sex'],
-      isDelete: json['Is_deleted'],
+      isAdmin: json['Is_admin'] != null
+          ? int.tryParse(json['Is_admin'].toString())
+          : null,
+      birthday: json['Birthday'] != null
+          ? DateTime.tryParse(json['Birthday'].toString())
+          : null,
+      sex: json['Sex'] != null ? int.tryParse(json['Sex'].toString()) : null,
+      isDelete: json['Is_deleted'] != null
+          ? int.tryParse(json['Is_deleted'].toString())
+          : null,
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'User_id': userId,
@@ -97,7 +100,7 @@ class User {
       'Password': password,
       'Username': userName,
       'Is_admin': isAdmin,
-      'Birthday': birthday.toIso8601String(),
+      'Birthday': birthday!.toIso8601String(),
       'Sex': sex,
       'Is_deleted': isDelete,
     };

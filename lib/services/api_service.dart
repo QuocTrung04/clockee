@@ -60,6 +60,7 @@ class ApiService {
 
   static Future<bool> registerUser({
     required String name,
+    required String phone,
     required String email,
     required String password,
   }) async {
@@ -71,6 +72,7 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'username': name,
+          'phone': phone,
           'email': email,
           'password': password,
         }),

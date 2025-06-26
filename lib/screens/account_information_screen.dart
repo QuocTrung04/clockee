@@ -90,7 +90,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                 bottom: 20,
                 left: 120,
                 child: Text(
-                  _displayName ?? "ọt ọt",
+                  _displayName ?? "Đang tải..",
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,

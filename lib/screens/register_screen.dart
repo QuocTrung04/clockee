@@ -15,6 +15,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
   bool _confirmpassword = true;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _corfirmPasswordController =
       TextEditingController();
@@ -28,6 +29,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
 
     final success = await ApiService.registerUser(
       name: _nameController.text,
+      phone: _phoneController.text,
       email: _emailController.text,
       password: _passwordController.text,
     );
@@ -141,207 +143,243 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                         ),
                         child: Padding(
                           padding: EdgeInsets.all(30),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 60),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.purple.shade100,
-                                      blurRadius: 20,
-                                      offset: Offset(0, 10),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
-                                            color: Colors.grey.shade200,
-                                          ),
-                                        ),
-                                      ),
-                                      child: TextField(
-                                        controller: _nameController,
-                                        decoration: InputDecoration(
-                                          hintText: "Tài khoản",
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey,
-                                          ),
-                                          border: InputBorder.none,
-                                          prefixIcon: Padding(
-                                            padding: EdgeInsetsGeometry.all(10),
-                                            child: IconifyIcon(
-                                              icon: 'mdi-light:account',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
-                                            color: Colors.grey.shade200,
-                                          ),
-                                        ),
-                                      ),
-                                      child: TextField(
-                                        controller: _emailController,
-                                        decoration: InputDecoration(
-                                          hintText: "Email",
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey,
-                                          ),
-                                          border: InputBorder.none,
-                                          prefixIcon: Padding(
-                                            padding: EdgeInsetsGeometry.all(10),
-                                            child: IconifyIcon(
-                                              icon: 'mdi-light:email',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                          bottom: BorderSide(
-                                            color: Colors.grey.shade200,
-                                          ),
-                                        ),
-                                      ),
-                                      child: TextField(
-                                        controller: _passwordController,
-                                        obscureText: _password,
-                                        decoration: InputDecoration(
-                                          hintText: "Mật khẩu",
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey,
-                                          ),
-                                          border: InputBorder.none,
-                                          suffixIcon: IconButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                _password = !_password;
-                                              });
-                                            },
-                                            icon: IconifyIcon(
-                                              icon: _password
-                                                  ? 'iconoir:eye-closed'
-                                                  : 'iconoir:eye',
-                                            ),
-                                          ),
-                                          prefixIcon: Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: IconifyIcon(
-                                              icon: 'arcticons:nc-passwords',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      child: TextField(
-                                        controller: _corfirmPasswordController,
-                                        obscureText: _confirmpassword,
-                                        decoration: InputDecoration(
-                                          hintText: "Nhập lại mật khẩu",
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey,
-                                          ),
-                                          border: InputBorder.none,
-                                          suffixIcon: IconButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                _confirmpassword =
-                                                    !_confirmpassword;
-                                              });
-                                            },
-                                            icon: IconifyIcon(
-                                              icon: _confirmpassword
-                                                  ? 'iconoir:eye-closed'
-                                                  : 'iconoir:eye',
-                                            ),
-                                          ),
-                                          prefixIcon: Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: IconifyIcon(
-                                              icon: 'arcticons:nc-passwords',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 40),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => LoginScreen(),
-                                    ),
-                                  );
-                                },
-                                child: Container(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 60),
+                                Container(
                                   decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(color: Colors.grey),
-                                    ),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.purple.shade100,
+                                        blurRadius: 20,
+                                        offset: Offset(0, 10),
+                                      ),
+                                    ],
                                   ),
-                                  child: Text(
-                                    'Đăng nhập',
-                                    style: TextStyle(
-                                      color: Colors.grey.shade400,
-                                    ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                          ),
+                                        ),
+                                        child: TextField(
+                                          controller: _nameController,
+                                          decoration: InputDecoration(
+                                            hintText: "Tài khoản",
+                                            hintStyle: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                            border: InputBorder.none,
+                                            prefixIcon: Padding(
+                                              padding: EdgeInsetsGeometry.all(
+                                                10,
+                                              ),
+                                              child: IconifyIcon(
+                                                icon: 'mdi-light:account',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                          ),
+                                        ),
+                                        child: TextField(
+                                          controller: _emailController,
+                                          decoration: InputDecoration(
+                                            hintText: "Email",
+                                            hintStyle: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                            border: InputBorder.none,
+                                            prefixIcon: Padding(
+                                              padding: EdgeInsetsGeometry.all(
+                                                10,
+                                              ),
+                                              child: IconifyIcon(
+                                                icon: 'mdi-light:email',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                          ),
+                                        ),
+                                        child: TextField(
+                                          controller: _phoneController,
+                                          decoration: InputDecoration(
+                                            hintText: "Số điện thoại",
+                                            hintStyle: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                            border: InputBorder.none,
+                                            prefixIcon: Padding(
+                                              padding: EdgeInsetsGeometry.all(
+                                                10,
+                                              ),
+                                              child: IconifyIcon(
+                                                icon: 'mdi-light:phone',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                          ),
+                                        ),
+                                        child: TextField(
+                                          controller: _passwordController,
+                                          obscureText: _password,
+                                          decoration: InputDecoration(
+                                            hintText: "Mật khẩu",
+                                            hintStyle: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                            border: InputBorder.none,
+                                            suffixIcon: IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  _password = !_password;
+                                                });
+                                              },
+                                              icon: IconifyIcon(
+                                                icon: _password
+                                                    ? 'iconoir:eye-closed'
+                                                    : 'iconoir:eye',
+                                              ),
+                                            ),
+                                            prefixIcon: Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: IconifyIcon(
+                                                icon: 'arcticons:nc-passwords',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      Container(
+                                        padding: EdgeInsets.all(10),
+                                        child: TextField(
+                                          controller:
+                                              _corfirmPasswordController,
+                                          obscureText: _confirmpassword,
+                                          decoration: InputDecoration(
+                                            hintText: "Nhập lại mật khẩu",
+                                            hintStyle: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                            border: InputBorder.none,
+                                            suffixIcon: IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  _confirmpassword =
+                                                      !_confirmpassword;
+                                                });
+                                              },
+                                              icon: IconifyIcon(
+                                                icon: _confirmpassword
+                                                    ? 'iconoir:eye-closed'
+                                                    : 'iconoir:eye',
+                                              ),
+                                            ),
+                                            prefixIcon: Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: IconifyIcon(
+                                                icon: 'arcticons:nc-passwords',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              SizedBox(height: 40),
-
-                              SizedBox(
-                                width: 230,
-                                height: 50,
-                                child: GestureDetector(
+                                SizedBox(height: 40),
+                                GestureDetector(
                                   onTap: () {
-                                    _dangKy();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginScreen(),
+                                      ),
+                                    );
                                   },
                                   child: Container(
-                                    alignment: Alignment.center,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        colors: [Colors.purple, Colors.pink],
+                                      border: Border(
+                                        bottom: BorderSide(color: Colors.grey),
                                       ),
                                     ),
                                     child: Text(
-                                      'Đăng ký',
+                                      'Đăng nhập',
                                       style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white,
+                                        color: Colors.grey.shade400,
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                SizedBox(height: 40),
+
+                                SizedBox(
+                                  width: 230,
+                                  height: 50,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _dangKy();
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          colors: [Colors.purple, Colors.pink],
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Đăng ký',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
