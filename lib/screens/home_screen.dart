@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:clockee/data/favorite_notifier.dart';
 import 'package:clockee/screens/cart_item_screen.dart';
 import 'package:clockee/screens/product_details_screen.dart';
 import 'package:clockee/screens/search_screen.dart';
@@ -9,7 +10,6 @@ import 'package:iconify_design/iconify_design.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/data.dart';
 import '../models/sanpham.dart';
-import '../screens/menu_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
       userID = prefs.getInt('userid');
     });
 
-    // Gọi loadProducts sau khi có userID
     loadProducts();
   }
 
@@ -74,7 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Nội dung chính ở đây
           SizedBox(
             width: double.infinity,
             child: Row(
@@ -162,25 +160,45 @@ class _HomeScreenState extends State<HomeScreen> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return ValueListenableBuilder(
-                  valueListenable: gioitinhNotifier,
-                  builder: (context, gioiTinh, _) {
-                    final sanPhamLoc = allProducts
-                        .where((sp) => sp.sex == gioiTinh)
-                        .toList();
-
-                    return GridView.builder(
-                      itemCount: sanPhamLoc.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 0.57,
-                          ),
-                      itemBuilder: (context, index) {
-                        return SanPhamWidget(sanPham: sanPhamLoc[index]);
+                  valueListenable: favoriteChangedNotifier,
+                  builder: (context, _, __) {
+                    // Mỗi lần Notifier đổi, FutureBuilder fetch lại API
+                    return FutureBuilder<List<Product>>(
+                      future: ApiService.fetchProducts(
+                        userID ?? 0,
+                      ), // GỌI LẠI API
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        final allProducts = snapshot.data!;
+                        return ValueListenableBuilder(
+                          valueListenable: gioitinhNotifier,
+                          builder: (context, gioiTinh, _) {
+                            final sanPhamLoc = allProducts
+                                .where((sp) => sp.sex == gioiTinh)
+                                .toList();
+                            return GridView.builder(
+                              itemCount: sanPhamLoc.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 3,
+                                    mainAxisSpacing: 5,
+                                    childAspectRatio: 0.52,
+                                  ),
+                              itemBuilder: (context, index) {
+                                return SanPhamWidget(
+                                  sanPham: sanPhamLoc[index],
+                                );
+                              },
+                            );
+                          },
+                        );
                       },
                     );
                   },
@@ -305,17 +323,48 @@ class SanPhamWidget extends StatefulWidget {
 }
 
 class _SanPhamWidgetState extends State<SanPhamWidget> {
+  late int favorite;
+  int? userID;
+
+  @override
+  void initState() {
+    super.initState();
+    favorite = widget.sanPham.favorite;
+    _loadUserid();
+  }
+
+  @override
+  void didUpdateWidget(covariant SanPhamWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.sanPham.favorite != widget.sanPham.favorite) {
+      setState(() {
+        favorite = widget.sanPham.favorite;
+      });
+    }
+  }
+
+  Future<void> _loadUserid() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+
+    setState(() {
+      userID = prefs.getInt('userid');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => ProductDetailScreen(sanpham: widget.sanPham),
-        //   ),
-        // );
-        print(widget.sanPham.productId);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailScreen(
+              productId: widget.sanPham.productId,
+              userId: userID!,
+            ),
+          ),
+        );
       },
       child: Card(
         color: const Color(0xFFFFFFFF),
@@ -332,7 +381,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Image.network(
-                        widget.sanPham.imageUrl,
+                        widget.sanPham.imageUrl!,
                         width: double.infinity,
                         fit: BoxFit.contain,
                       ),
@@ -342,16 +391,78 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                     top: 8,
                     right: 8,
                     child: GestureDetector(
-                      onTap: () {
-                        print('them yeu thich');
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        final userId = prefs.getInt('userid');
+                        if (!mounted) return;
+
+                        if (userId == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Vui lòng đăng nhập để yêu thích'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        bool success = false;
+
+                        if (favorite == 1) {
+                          // Xóa yêu thích
+                          success = await ApiService.removeFavoriteProduct(
+                            userId: userId,
+                            productId: widget.sanPham.productId,
+                          );
+                          if (success) {
+                            setState(() {
+                              favorite = 0;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Đã xóa khỏi yêu thích'),
+                              ),
+                            );
+                            favoriteChangedNotifier.value =
+                                !favoriteChangedNotifier.value;
+                          }
+                        } else {
+                          // Thêm yêu thích
+                          success = await ApiService.addFavoriteProduct(
+                            userId: userId,
+                            productId: widget.sanPham.productId,
+                          );
+                          if (success) {
+                            setState(() {
+                              favorite = 1;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Đã thêm vào yêu thích'),
+                              ),
+                            );
+                            favoriteChangedNotifier.value =
+                                !favoriteChangedNotifier.value;
+                          }
+                        }
+
+                        if (!success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Không thể cập nhật yêu thích'),
+                            ),
+                          );
+                          favoriteChangedNotifier.value =
+                              !favoriteChangedNotifier.value;
+                        }
                       },
+
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          boxShadow: widget.sanPham.favorite == 1
+                          boxShadow: favorite == 1
                               ? [
                                   BoxShadow(
                                     color: Colors.purple.shade100,
@@ -370,11 +481,10 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             );
                           },
                           child: IconifyIcon(
-                            key: ValueKey(widget.sanPham.favorite),
-                            icon: widget.sanPham.favorite == 1
+                            key: ValueKey(favorite),
+                            icon: favorite == 1
                                 ? 'iconoir:heart-solid'
                                 : 'iconoir:heart',
-
                             color: const Color(0xFF662D91),
                           ),
                         ),
@@ -386,7 +496,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
             ),
             SizedBox(height: 5),
             Text(
-              widget.sanPham.name,
+              widget.sanPham.name ?? "",
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
@@ -394,27 +504,51 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
             ),
             const SizedBox(height: 10),
             Text(
-              widget.sanPham.watchModel,
+              widget.sanPham.watchModel!,
               style: const TextStyle(
                 color: Color(0xFF662D91),
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 5),
-            Text(
-              '${widget.sanPham.faceSize} | ${widget.sanPham.typeName}',
-              style: const TextStyle(fontSize: 12, color: Color(0xFF662D91)),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Giá ${_formatCurrency(widget.sanPham.actualPrice)}đ',
-              style: const TextStyle(
-                color: Color(0xFF662D91),
-                fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Text(
+                '${widget.sanPham.faceSize} | ${widget.sanPham.typeName}',
+                style: const TextStyle(fontSize: 12, color: Color(0xFF662D91)),
+                textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 4),
+            widget.sanPham.sellPrice == null
+                ? Text(
+                    'Giá: ${_formatCurrency(widget.sanPham.actualPrice!)}đ',
+                    style: const TextStyle(
+                      color: Color(0xFF662D91),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                : Column(
+                    children: [
+                      Text(
+                        'Giá: ${_formatCurrency(widget.sanPham.actualPrice!)}đ',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: Colors.grey,
+                          color: Color(0xFFCFCFCF),
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        'Giá KM:${_formatCurrency(widget.sanPham.sellPrice!)}đ',
+                        style: const TextStyle(
+                          color: Color(0xFF662D91),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(

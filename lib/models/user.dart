@@ -53,7 +53,7 @@ class User {
   final String? phone;
   final String password;
   final String userName;
-  final int? isAdmin;
+  final String? isAdmin;
   final DateTime? birthday;
   final int? sex;
   final int? isDelete;
@@ -79,16 +79,12 @@ class User {
       phone: json['Phone'] as String?,
       password: json['Password'] as String,
       userName: json['Username'] as String,
-      isAdmin: json['Is_admin'] != null
-          ? int.tryParse(json['Is_admin'].toString())
-          : null,
+      isAdmin: json['Is_admin'] as String,
       birthday: json['Birthday'] != null
           ? DateTime.tryParse(json['Birthday'].toString())
           : null,
       sex: json['Sex'] != null ? int.tryParse(json['Sex'].toString()) : null,
-      isDelete: json['Is_deleted'] != null
-          ? int.tryParse(json['Is_deleted'].toString())
-          : null,
+      isDelete: json['Is_deleted'],
     );
   }
   Map<String, dynamic> toJson() {
@@ -107,7 +103,7 @@ class User {
   }
 
   User copyWith({
-    int? isAdmin,
+    String? isAdmin,
     String? password,
     String? name,
     int? id,

@@ -1,4 +1,4 @@
-import 'package:clockee/data/data.dart';
+import 'package:clockee/data/favorite_notifier.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:clockee/models/sanpham.dart';
@@ -12,58 +12,70 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
-  Future<List<Product>>? _favoriteProducts;
   int? userId;
 
   @override
   void initState() {
     super.initState();
-    _loadUserid();
+    _loadUserId();
   }
 
-  Future<void> _loadUserid() async {
+  Future<void> _loadUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final id = prefs.getInt('userid');
-
-    if (id != null && mounted) {
+    if (mounted) {
       setState(() {
         userId = id;
-        _favoriteProducts = ApiService.fetchFavoriteProducts(userId!);
       });
     }
   }
 
+  Future<List<Product>> fetchFavoriteProducts() async {
+    if (userId == null) return [];
+    final list = await ApiService.fetchFavoriteProducts(userId!);
+    print('Danh sách nhận được: ${list.map((e) => e.productId).toList()}');
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_favoriteProducts == null) {
+    // Chưa lấy được userId thì show loading
+    if (userId == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    return FutureBuilder<List<Product>>(
-      future: _favoriteProducts,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Lỗi: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text(
-              'Không có sản phẩm yêu thích',
-              style: TextStyle(
-                fontSize: 20,
-                color: Color(0xFF662D91),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          );
-        }
-
-        final sanPhamYeuThich = snapshot.data!;
-        return ListView.builder(
-          padding: const EdgeInsets.all(12),
-          itemCount: sanPhamYeuThich.length,
-          itemBuilder: (context, index) {
-            return SanPhamWidget(sanPham: sanPhamYeuThich[index]);
+    return ValueListenableBuilder(
+      valueListenable: favoriteChangedNotifier,
+      builder: (context, value, child) {
+        print('FavoriteScreen rebuild, value = $value');
+        return FutureBuilder<List<Product>>(
+          future: fetchFavoriteProducts(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Lỗi: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Không có sản phẩm yêu thích',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Color(0xFF662D91),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return SanPhamWidget(
+                  sanPham:
+                      snapshot.data![index], // <-- LUÔN lấy từ snapshot.data!
+                  userId: userId!,
+                );
+              },
+            );
           },
         );
       },
@@ -73,8 +85,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
 class SanPhamWidget extends StatefulWidget {
   final Product sanPham;
+  final int userId;
 
-  const SanPhamWidget({super.key, required this.sanPham});
+  const SanPhamWidget({super.key, required this.sanPham, required this.userId});
 
   @override
   State<SanPhamWidget> createState() => _SanPhamWidgetState();
@@ -96,7 +109,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
               children: [
                 Positioned.fill(
                   child: Image.network(
-                    widget.sanPham.imageUrl,
+                    widget.sanPham.imageUrl!,
                     width: double.infinity,
                     fit: BoxFit.contain,
                   ),
@@ -105,9 +118,42 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                   top: 8,
                   right: 8,
                   child: GestureDetector(
-                    onTap: () {
-                      print('them yeu thich');
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final userId = prefs.getInt('userid');
+                      if (!mounted) return;
+                      if (userId == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Vui lòng đăng nhập để yêu thích'),
+                          ),
+                        );
+                        return;
+                      }
+
+                      final success = await ApiService.removeFavoriteProduct(
+                        userId: userId,
+                        productId: widget.sanPham.productId,
+                      );
+                      if (!mounted) return;
+                      if (success) {
+                        favoriteChangedNotifier.value =
+                            !favoriteChangedNotifier.value;
+                        print(widget.sanPham.favorite);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Đã xóa khỏi yêu thích'),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Không thể xóa khỏi yêu thích'),
+                          ),
+                        );
+                      }
                     },
+
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       padding: const EdgeInsets.all(6),
@@ -131,9 +177,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                           );
                         },
                         child: IconifyIcon(
-                          key: ValueKey(widget.sanPham.favorite),
                           icon: 'iconoir:heart-solid',
-
                           color: const Color(0xFF662D91),
                         ),
                       ),
@@ -145,7 +189,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
           ),
           const SizedBox(height: 10),
           Text(
-            widget.sanPham.name,
+            widget.sanPham.name!,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             overflow: TextOverflow.ellipsis,
@@ -153,7 +197,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
           ),
           const SizedBox(height: 4),
           Text(
-            widget.sanPham.watchModel,
+            widget.sanPham.watchModel!,
             style: const TextStyle(
               color: Color(0xFF662D91),
               fontWeight: FontWeight.w600,
@@ -167,7 +211,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Giá ${_formatCurrency(widget.sanPham.sellPrice)}đ',
+            'Giá ${_formatCurrency(widget.sanPham.sellPrice ?? 0)}đ',
             style: const TextStyle(
               color: Color(0xFF662D91),
               fontWeight: FontWeight.bold,

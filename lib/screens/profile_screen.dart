@@ -1,8 +1,8 @@
 import 'package:clockee/models/user.dart';
 import 'package:clockee/screens/change_password_screen.dart';
-import 'package:clockee/screens/edit_profile_screen.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:iconify_design/iconify_design.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -213,7 +213,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFF3F3F3),
       appBar: AppBar(
-        leading: BackButton(),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+          icon: IconifyIcon(icon: 'material-symbols-light:arrow-back'),
+        ),
         title: Text('Thông tin cá nhân'),
         centerTitle: true,
         backgroundColor: Colors.white,
