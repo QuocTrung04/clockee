@@ -1,10 +1,12 @@
 import 'package:clockee/screens/home_screen.dart';
 import 'package:clockee/screens/register_screen.dart';
 import 'package:clockee/services/api_service.dart';
+import 'package:clockee/data/data.dart';
 import 'package:clockee/widgets/custom_main_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -254,14 +256,15 @@ class _StateLoginScreen extends State<LoginScreen> {
                                       return;
                                     }
 
-                                    final success = await ApiService.login(
+                                    final userLogin = await ApiService.login(
                                       username,
                                       password,
                                     );
 
                                     if (!mounted) return;
 
-                                    if (success) {
+                                    if (userLogin != null) {
+                                      Provider.of<AppData>(context, listen: false).setUser(userLogin);
                                       final prefs =
                                           await SharedPreferences.getInstance();
                                       await prefs.setBool('isLoggedIn', true);

@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:clockee/data/data.dart';
+import 'package:clockee/models/cart.dart';
 import 'package:clockee/models/sanpham.dart';
 import 'package:clockee/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -25,38 +28,33 @@ class ApiService {
   }
 
   //API ĐĂNG NHẬP
-  static Future<bool> login(String username, String password) async {
-    final url = Uri.parse('http://103.77.243.218/api/login');
+static Future<User?> login(String username, String password) async {
+  final url = Uri.parse('http://103.77.243.218/api/login');
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {'username': username, 'password': password},
-    );
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: {'username': username, 'password': password},
+  );
 
-    print('Status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+    if (data['User_id'] != null && data['Username'] == username) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('username', data['Username']);
+      await prefs.setInt('userid', data['User_id']);
 
-      if (data['User_id'] != null && data['Username'] == username) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
-        await prefs.setString('username', data['Username']);
-        await prefs.setInt('userid', data['User_id']);
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      print('sai tài khoản hoặc mật khẩu');
-      return false;
+      return User.fromJson(data); // 👈 trả về user để gán ngoài
     }
   }
 
+  return null;
+}
+
+
   //API ĐĂNG KÝ
-  static const String baseUrl = 'http://103.77.243.218/api/register';
 
   static Future<bool> registerUser({
     required String name,
@@ -64,7 +62,7 @@ class ApiService {
     required String email,
     required String password,
   }) async {
-    final url = Uri.parse(baseUrl);
+    final url = Uri.parse('http://103.77.243.218/api/register');
 
     try {
       final response = await http.post(
@@ -164,6 +162,23 @@ class ApiService {
       throw Exception(
         'Cập nhật thất bại: ${response.statusCode} - ${response.body}',
       );
+    }
+  }
+
+  static Future<List<CartItem>> fetchCartItem(int userId) async {
+      final url = Uri.parse('http://103.77.243.218/orderitem/$userId');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((item) => CartItem.fromJson(item)).toList();
+      } else {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch products: $e');
     }
   }
 }

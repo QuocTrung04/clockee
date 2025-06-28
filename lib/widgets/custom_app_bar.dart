@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
 import '../screens/home_screen.dart';
 import '../data/data.dart';
+import '../services/api_service.dart';
+import '../models/cart.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -16,11 +19,34 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _CustomAppBarState extends State<CustomAppBar> {
   int tinhSoLuong() {
+    final cart = Provider.of<AppData>(context).cartItems;
     int soluong = 0;
-    for (var itemsl in cartItems) {
-      soluong += itemsl.soLuong;
+    for (var itemsl in cart) {
+      soluong += itemsl.quantity;
     }
     return soluong;
+  }
+
+   @override
+  void initState() {
+    super.initState();
+    if(userData != null){
+      _loadCart();
+    }
+  }
+
+  void _loadCart() async {
+    final appData = Provider.of<AppData>(context, listen: false);
+    final user = appData.user;
+
+    if (user != null) {
+      try {
+        final items = await ApiService.fetchCartItem(user.userId);
+        appData.setCart(items); // 👈 Gán vào AppData
+      } catch (e) {
+        print('Lỗi khi lấy giỏ hàng: $e');
+      }
+    }
   }
 
   @override
@@ -88,3 +114,5 @@ class _CustomAppBarState extends State<CustomAppBar> {
     );
   }
 }
+
+

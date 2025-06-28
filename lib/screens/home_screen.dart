@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:clockee/models/cart.dart';
 import 'package:clockee/screens/cart_item_screen.dart';
 import 'package:clockee/screens/product_details_screen.dart';
 import 'package:clockee/screens/search_screen.dart';
@@ -9,6 +9,9 @@ import 'package:iconify_design/iconify_design.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/data.dart';
 import '../models/sanpham.dart';
+import '../models/orderitem.dart';
+import '../models/order.dart';
+import '../models/user.dart';
 import '../screens/menu_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,28 +26,35 @@ class _HomeScreenState extends State<HomeScreen> {
   final ValueNotifier<int> gioitinhNotifier = ValueNotifier<int>(1);
 
   List<Product> allProducts = [];
+  List<CartItem> cartItems = [];
   bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
-
-    _loadUserid();
-  }
-
-  Future<void> _loadUserid() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
-
-    setState(() {
-      userID = prefs.getInt('userid');
-    });
-
-    // Gọi loadProducts sau khi có userID
+    _initCart();
     loadProducts();
   }
 
-  void loadProducts() async {
+  void _initCart() async {
+  // Đợi dữ liệu user nếu cần
+  await _loadUserid(); // load và gán userData từ SharedPreferences
+
+  if (userData != null) {
+    final fetchedItems = await ApiService.fetchCartItem(userData!.userId);
+    setState(() {
+      cartItems = fetchedItems;
+    });
+  }
+}
+
+Future<void> _loadUserid() async {
+  final prefs = await SharedPreferences.getInstance();
+  final id = prefs.getInt('userid');
+  final username = prefs.getString('username');
+  
+}
+
+void loadProducts() async {
     try {
       final products = await ApiService.fetchProducts(userID ?? 0);
       print('ĐÂY LÀ ID 🫵: $userID');
@@ -61,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
       print('Lỗi tải sản phẩm: $e');
     }
   }
+
 
   @override
   void dispose() {

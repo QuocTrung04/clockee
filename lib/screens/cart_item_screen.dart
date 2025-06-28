@@ -1,7 +1,9 @@
 import 'package:clockee/data/data.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 import 'package:clockee/models/cart.dart';
+import 'package:provider/provider.dart';
 
 class CartItemScreen extends StatefulWidget {
   final VoidCallback onClose;
@@ -34,15 +36,16 @@ class _CartItemScreenState extends State<CartItemScreen>
     await _controler.reverse();
     widget.onClose();
   }
-
+  
   @override
   void dispose() {
     _controler.dispose();
     super.dispose();
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    final CartItem = Provider.of<AppData>(context).cartItems;
     return SafeArea(
       child: Material(
         color: Colors.black87,
@@ -74,7 +77,7 @@ class _CartItemScreenState extends State<CartItemScreen>
                             ),
                             SizedBox(width: 10),
                             Text(
-                              '${tinhSoLuong()} sản phẩm',
+                              '${tinhquantity()} sản phẩm',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w200,
@@ -92,30 +95,37 @@ class _CartItemScreenState extends State<CartItemScreen>
                         ),
                       ),
                       Expanded(
-                        child: ListView.builder(
-                          itemCount: cartItems.length,
-                          itemBuilder: (context, index) {
-                            final item = cartItems[index];
-                            return CartItemWidget(
-                              item: item,
-                              onIncrease: () {
-                                setState(() {
-                                  item.soLuong++;
-                                });
-                              },
-                              onDecrease: () {
-                                setState(() {
-                                  if (item.soLuong > 1) item.soLuong--;
-                                });
-                              },
-                              onDelete: () {
-                                setState(() {
-                                  cartItems.removeAt(index);
-                                });
-                              },
-                            );
-                          },
-                        ),
+                        child: CartItem.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'Giỏ hàng trống',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: CartItem.length, // 👈 ĐỪNG quên thêm dòng này!
+                                itemBuilder: (context, index) {
+                                  final item = CartItem[index];
+                                  return CartItemWidget(
+                                    item: item,
+                                    onIncrease: () {
+                                      setState(() {
+                                        item.quantity++;
+                                      });
+                                    },
+                                    onDecrease: () {
+                                      setState(() {
+                                        if (item.quantity > 1) item.quantity--;
+                                      });
+                                    },
+                                    onDelete: () {
+                                      setState(() {
+                                        CartItem.removeAt(index);
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -130,7 +140,7 @@ class _CartItemScreenState extends State<CartItemScreen>
                           vertical: 12,
                         ),
                         child: SafeArea(
-                          child: cartItems.isEmpty
+                          child: CartItem.isEmpty
                               ? Center(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -209,18 +219,20 @@ class _CartItemScreenState extends State<CartItemScreen>
     );
   }
 
-  int tinhSoLuong() {
-    int soluong = 0;
+  int tinhquantity() {
+    int quantity = 0;
+    final cartItems = Provider.of<AppData>(context).cartItems;
     for (var itemsl in cartItems) {
-      soluong += itemsl.soLuong;
+      quantity += itemsl.quantity;
     }
-    return soluong;
+    return quantity;
   }
 
   int tinhTongTien() {
     int tongtien = 0;
+    final cartItems = Provider.of<AppData>(context).cartItems;
     for (var itemtt in cartItems) {
-      tongtien += itemtt.soLuong * itemtt.price;
+      tongtien += itemtt.quantity * itemtt.price;
     }
     return tongtien;
   }
@@ -238,14 +250,14 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   void _increaseQuantity(int index) {
     setState(() {
-      widget.items[index].soLuong++;
+      widget.items[index].quantity++;
     });
   }
 
   void _decreaseQuantity(int index) {
     setState(() {
-      if (widget.items[index].soLuong > 1) {
-        widget.items[index].soLuong--;
+      if (widget.items[index].quantity > 1) {
+        widget.items[index].quantity--;
       }
     });
   }
@@ -315,10 +327,10 @@ class CartItemWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(item.tenSanPham),
+                Text(item.name),
                 SizedBox(height: 7),
                 Text(
-                  item.maSanPham,
+                  item.model,
                   style: TextStyle(color: Color(0xFF662D91)),
                 ),
                 SizedBox(height: 7),
@@ -340,7 +352,7 @@ class CartItemWidget extends StatelessWidget {
                       onPressed: onDecrease,
                       icon: IconifyIcon(icon: 'gala:remove'),
                     ),
-                    Text(' ${item.soLuong}'),
+                    Text(' ${item.quantity}'),
                     IconButton(
                       onPressed: onIncrease,
                       icon: IconifyIcon(icon: 'gala:add'),

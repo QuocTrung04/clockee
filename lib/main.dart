@@ -1,10 +1,17 @@
 import 'package:clockee/screens/account_information_screen.dart';
 import 'package:clockee/screens/account_screen.dart';
+import 'package:clockee/data/data.dart';
 import 'package:clockee/widgets/custom_main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AppData(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
