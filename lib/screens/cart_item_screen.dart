@@ -1,4 +1,5 @@
 import 'package:clockee/data/data.dart';
+import 'package:clockee/screens/pay_screen.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
@@ -183,7 +184,17 @@ class _CartItemScreenState extends State<CartItemScreen>
                                     SizedBox(
                                       width: double.infinity,
                                       child: ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () async {
+                                          await _controler.reverse();
+                                          widget.onClose();
+                                          if (!mounted) return;
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PayScreen(),
+                                            ),
+                                          );
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.purple,
                                           padding: EdgeInsets.symmetric(

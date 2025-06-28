@@ -52,7 +52,7 @@ class User {
   final String? name;
   final String? phone;
   final String userName;
-  final int? isAdmin;
+  final String? isAdmin;
   final DateTime? birthday;
   final int? sex;
   final int? isDelete;
@@ -119,7 +119,7 @@ class User {
   }
 
   User copyWith({
-    int? isAdmin,
+    String? isAdmin,
     String? password,
     String? name,
     int? id,

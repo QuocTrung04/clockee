@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:clockee/models/cart.dart';
+
+import 'package:clockee/data/favorite_notifier.dart';
 import 'package:clockee/screens/cart_item_screen.dart';
-import 'package:clockee/screens/product_details_screen.dart';
 import 'package:clockee/screens/search_screen.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import '../models/sanpham.dart';
 import '../models/orderitem.dart';
 import '../models/order.dart';
 import '../models/user.dart';
-import '../screens/menu_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -343,7 +343,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Image.network(
-                        widget.sanPham.imageUrl,
+                        widget.sanPham.imageUrl!,
                         width: double.infinity,
                         fit: BoxFit.contain,
                       ),
@@ -353,16 +353,78 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                     top: 8,
                     right: 8,
                     child: GestureDetector(
-                      onTap: () {
-                        print('them yeu thich');
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        final userId = prefs.getInt('userid');
+                        if (!mounted) return;
+
+                        if (userId == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Vui lòng đăng nhập để yêu thích'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        bool success = false;
+
+                        if (favorite == 1) {
+                          // Xóa yêu thích
+                          success = await ApiService.removeFavoriteProduct(
+                            userId: userId,
+                            productId: widget.sanPham.productId,
+                          );
+                          if (success) {
+                            setState(() {
+                              favorite = 0;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Đã xóa khỏi yêu thích'),
+                              ),
+                            );
+                            favoriteChangedNotifier.value =
+                                !favoriteChangedNotifier.value;
+                          }
+                        } else {
+                          // Thêm yêu thích
+                          success = await ApiService.addFavoriteProduct(
+                            userId: userId,
+                            productId: widget.sanPham.productId,
+                          );
+                          if (success) {
+                            setState(() {
+                              favorite = 1;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Đã thêm vào yêu thích'),
+                              ),
+                            );
+                            favoriteChangedNotifier.value =
+                                !favoriteChangedNotifier.value;
+                          }
+                        }
+
+                        if (!success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Không thể cập nhật yêu thích'),
+                            ),
+                          );
+                          favoriteChangedNotifier.value =
+                              !favoriteChangedNotifier.value;
+                        }
                       },
+
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
-                          boxShadow: widget.sanPham.favorite == 1
+                          boxShadow: favorite == 1
                               ? [
                                   BoxShadow(
                                     color: Colors.purple.shade100,
@@ -381,11 +443,10 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             );
                           },
                           child: IconifyIcon(
-                            key: ValueKey(widget.sanPham.favorite),
-                            icon: widget.sanPham.favorite == 1
+                            key: ValueKey(favorite),
+                            icon: favorite == 1
                                 ? 'iconoir:heart-solid'
                                 : 'iconoir:heart',
-
                             color: const Color(0xFF662D91),
                           ),
                         ),

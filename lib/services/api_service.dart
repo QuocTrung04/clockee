@@ -99,7 +99,6 @@ static Future<User?> login(String username, String password) async {
       final response = await http.get(url);
       print('📥 Status code: ${response.statusCode}');
       print('📦 Body: ${response.body}');
-
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((item) => Product.fromJson(item)).toList();
@@ -162,6 +161,85 @@ static Future<User?> login(String username, String password) async {
       throw Exception(
         'Cập nhật thất bại: ${response.statusCode} - ${response.body}',
       );
+    }
+  }
+
+  // API: Thêm sản phẩm yêu thích
+  static Future<bool> addFavoriteProduct({
+    required int userId,
+    required int productId,
+  }) async {
+    final url = Uri.parse('http://103.77.243.218/api/favorite');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': userId, 'product_id': productId}),
+      );
+      print("ma nguoi dung $userId, ma san pham $productId");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('✅ Thêm yêu thích thành công');
+        return true;
+      } else {
+        print(
+          '❌ Lỗi thêm yêu thích: ${response.statusCode} - ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      print('❌ Lỗi kết nối khi thêm yêu thích: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> removeFavoriteProduct({
+    required int userId,
+    required int productId,
+  }) async {
+    final url = Uri.parse('http://103.77.243.218/api/favorite');
+
+    try {
+      final response = await http.delete(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': userId, 'product_id': productId}),
+      );
+      print("ma nguoi dung $userId, ma san pham $productId");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('✅ Xoa yêu thích thành công');
+        return true;
+      } else {
+        print(
+          '❌ Lỗi thêm yêu thích: ${response.statusCode} - ${response.body}',
+        );
+        return false;
+      }
+    } catch (e) {
+      print('❌ Lỗi kết nối khi thêm yêu thích: $e');
+      return false;
+    }
+  }
+
+  //API CHI TIET SAN PHAM
+  static Future<Product> fetchProductDetail(int productId, int userId) async {
+    final url = Uri.parse(
+      'http://103.77.243.218/productdetail/$productId/$userId',
+    );
+    print('🔗 Đang gọi API chi tiết: $url');
+    try {
+      final response = await http.get(url);
+      print('📥 Status code: ${response.statusCode}');
+      print('📦 Body: ${response.body}');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // Nếu API trả về một object
+        return Product.fromJson(data);
+      } else {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Không thể lấy chi tiết sản phẩm: $e');
     }
   }
 

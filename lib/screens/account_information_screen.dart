@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:clockee/models/user.dart';
 import 'package:clockee/screens/login_screen.dart';
+import 'package:clockee/screens/order_screen.dart';
 import 'package:clockee/screens/profile_screen.dart';
 import 'package:clockee/screens/support_screen.dart';
 import 'package:clockee/services/api_service.dart';
@@ -78,10 +79,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 50,
-                  child: IconifyIcon(
-                    icon: 'emojione:pouting-cat-face',
-                    size: 60,
-                  ),
+                  child: IconifyIcon(icon: 'mdi:account', size: 60),
                 ),
               ),
 
@@ -127,16 +125,28 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                   _buildMenuItem(
                     Icons.shopping_bag,
                     'Thông tin tài khoản',
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProfileScreen(),
                         ),
                       );
+                      if (result == true) {
+                        _loadUserid(); // GỌI LẠI API để lấy user mới
+                      }
                     },
                   ),
-                  _buildMenuItem(Icons.shopping_bag, 'Đơn hàng', onTap: () {}),
+                  _buildMenuItem(
+                    Icons.shopping_bag,
+                    'Đơn hàng',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => OrderScreen()),
+                      );
+                    },
+                  ),
                   _buildMenuItem(
                     Icons.location_on,
                     'Địa chỉ',
