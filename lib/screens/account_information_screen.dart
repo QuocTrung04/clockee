@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:clockee/data/data.dart';
 import 'package:clockee/models/user.dart';
 import 'package:clockee/screens/login_screen.dart';
 import 'package:clockee/screens/order_screen.dart';
@@ -9,6 +10,7 @@ import 'package:clockee/services/api_service.dart';
 import 'package:clockee/widgets/custom_main_Screen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'address_screen.dart';
 
@@ -45,11 +47,10 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
       setState(() {
         userId = id;
         _displayName = user.name;
-        // <-- gán xong mới update UI
       });
       debugPrint(
         "Fetched displayName: $_displayName",
-      ); // <-- giờ _displayName đã có giá trị
+      );
     } catch (e) {
       debugPrint('Error fetching user: $e');
     }

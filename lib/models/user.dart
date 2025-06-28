@@ -47,7 +47,7 @@
 // }
 
 class User {
-  final int userId;
+  final int? userId;
   final String? email;
   final String? name;
   final String? phone;
@@ -84,26 +84,18 @@ class User {
   }
 
   factory User.fromJson(Map<String, dynamic> json) {
-  return User(
-    userId: int.tryParse(json['User_id'].toString()) ?? 0,
-    email: json['Email'] as String?,
-    name: json['Name'] as String?,
-    phone: json['Phone'] as String?,
-    userName: json['Username']?.toString() ?? '',
-    isAdmin: json['Is_admin'] != null
-        ? int.tryParse(json['Is_admin'].toString())
-        : null,
-    birthday: json['Birthday'] != null
-        ? DateTime.tryParse(json['Birthday'].toString())
-        : null,
-    sex: json['Sex'] != null
-        ? int.tryParse(json['Sex'].toString())
-        : null,
-    isDelete: json['Is_deleted'] != null
-        ? int.tryParse(json['Is_deleted'].toString())
-        : null,
-  );
-}
+    return User(
+      userId: json['User_id'],
+      email: json['Email'],
+      name: json['Name'],
+      phone: json['Phone'],
+      userName: json['Username'],
+      isAdmin: json['IsAdmin'],
+      birthday: json['Birthday'] != null ? DateTime.tryParse(json['Birthday']) : null,
+      sex: json['Sex'],
+      isDelete: json['IsDelete'],
+    );
+  }
   Map<String, dynamic> toJson() {
     return {
       'User_id': userId,
@@ -111,10 +103,10 @@ class User {
       'Name': name,
       'Phone': phone,
       'Username': userName,
-      'Is_admin': isAdmin,
+      'IsAdmin': isAdmin,
       'Birthday': birthday!.toIso8601String(),
       'Sex': sex,
-      'Is_deleted': isDelete,
+      'IsDelete': isDelete,
     };
   }
 

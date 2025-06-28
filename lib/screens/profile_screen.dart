@@ -1,8 +1,10 @@
+import 'package:clockee/data/data.dart';
 import 'package:clockee/models/user.dart';
 import 'package:clockee/screens/change_password_screen.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -72,6 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AppData>(context).user;
     if (_loading) {
       return _buildScaffold(Center(child: CircularProgressIndicator()));
     }
@@ -138,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 );
 
                                 await ApiService.updateUser(
-                                  _user!.userId,
+                                  _user!.userId!,
                                   name: _nameController.text,
                                   email: _emailController.text,
                                   phone: _phoneController.text,

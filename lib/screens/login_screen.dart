@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:clockee/screens/home_screen.dart';
 import 'package:clockee/screens/register_screen.dart';
 import 'package:clockee/services/api_service.dart';
@@ -264,11 +266,11 @@ class _StateLoginScreen extends State<LoginScreen> {
                                     if (!mounted) return;
 
                                     if (userLogin != null) {
-                                      Provider.of<AppData>(context, listen: false).setUser(userLogin);
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
+                                      
+                                      final prefs = await SharedPreferences.getInstance();
+                                      await prefs.setString("UserInfo", jsonEncode(userLogin.toJson()));
                                       await prefs.setBool('isLoggedIn', true);
-
+                                      Provider.of<AppData>(context, listen: false).setUser(userLogin);
                                       if (!mounted) return;
 
                                       Navigator.pushAndRemoveUntil(

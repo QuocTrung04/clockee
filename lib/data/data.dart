@@ -1,11 +1,12 @@
+import 'dart:convert';
+
 import 'package:clockee/models/address.dart';
 import 'package:clockee/models/user.dart';
 import 'package:clockee/models/cart.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-int? userId;
-User userData = User.empty();
-// List<CartItem> cartItems = [];
 
 class AppData extends ChangeNotifier {
   User? _user;
@@ -37,6 +38,25 @@ class AppData extends ChangeNotifier {
   void clearCart() {
     _cartItems.clear();
     notifyListeners();
+  }
+
+  Future<void> loadUserFromLocal() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString('UserInfo');
+    if (userJson != null) {
+      final userMap = jsonDecode(userJson);
+      _user = User.fromJson(userMap);
+      setUser(_user!);
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadCart() async {
+    if (_user != null) {
+      final listCart = await ApiService.fetchCartItem(_user!.userId!);
+      setCart(listCart);
+      notifyListeners();
+    }
   }
 }
 

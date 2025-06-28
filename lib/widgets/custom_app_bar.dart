@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../screens/home_screen.dart';
 import '../data/data.dart';
 import '../services/api_service.dart';
-import '../models/cart.dart';
+import '../models/user.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -18,6 +18,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
+  User? user; 
+
   int tinhSoLuong() {
     final cart = Provider.of<AppData>(context).cartItems;
     int soluong = 0;
@@ -30,19 +32,22 @@ class _CustomAppBarState extends State<CustomAppBar> {
    @override
   void initState() {
     super.initState();
-    if(userData != null){
+    user = Provider.of<AppData>(context, listen: false).user;
+
+    if(user != null){
       _loadCart();
     }
   }
 
   void _loadCart() async {
     final appData = Provider.of<AppData>(context, listen: false);
-    final user = appData.user;
+    print("day la load cart");
 
     if (user != null) {
       try {
-        final items = await ApiService.fetchCartItem(user.userId);
+        final items = await ApiService.fetchCartItem(user!.userId!);
         appData.setCart(items); // 👈 Gán vào AppData
+        print("đã gán cartitem");
       } catch (e) {
         print('Lỗi khi lấy giỏ hàng: $e');
       }
