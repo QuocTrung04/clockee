@@ -1,6 +1,9 @@
+import 'package:clockee/data/data.dart';
 import 'package:clockee/models/address.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:provider/provider.dart';
 
 class EditAdressScreen extends StatefulWidget {
   final Address address;
@@ -15,7 +18,7 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
   late TextEditingController _phoneController;
   late TextEditingController _provinceController;
   late TextEditingController _districtController;
-  late TextEditingController _wardsController;
+  late TextEditingController _communeController;
   late TextEditingController _streetController;
   late TextEditingController _addressDetailController;
   bool _isDefault = false;
@@ -27,7 +30,7 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
     _phoneController = TextEditingController(text: widget.address.phone);
     _provinceController = TextEditingController(text: widget.address.province);
     _districtController = TextEditingController(text: widget.address.district);
-    _wardsController = TextEditingController(text: widget.address.commune);
+    _communeController = TextEditingController(text: widget.address.commune);
     _streetController = TextEditingController(text: widget.address.street);
     _addressDetailController = TextEditingController(
       text: widget.address.addressDetail,
@@ -41,7 +44,7 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
     _phoneController.dispose();
     _provinceController.dispose();
     _districtController.dispose();
-    _wardsController.dispose();
+    _communeController.dispose();
     _streetController.dispose();
     super.dispose();
   }
@@ -76,7 +79,7 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
                     ),
                     const SizedBox(width: 20),
                     const Text(
-                      'Thêm Địa Chỉ',
+                      'Sửa Địa Chỉ',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -121,7 +124,7 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
                 border: border,
               ),
               _buildTextField(
-                controller: _wardsController,
+                controller: _communeController,
                 label: 'Phường/Xã',
                 border: border,
               ),
@@ -196,7 +199,40 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
                 ),
                 SizedBox(width: 20),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    Address updatedAddress = Address(
+                      receiveid: widget.address.receiveid,
+                      userId: widget.address.userId,
+                      name: _nameController.text,
+                      phone: _phoneController.text,
+                      province: _provinceController.text,
+                      commune: _communeController.text,
+                      district: _districtController.text,
+                      street: _streetController.text,
+                      addressDetail: _addressDetailController.text,
+                      isDefault: _isDefault,
+                    );
+                    final success = await Provider.of<AppData>(
+                      context,
+                      listen: false,
+                    ).updateAddress(updatedAddress);
+                    if (!mounted) return;
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Cập nhật địa chỉ thành công!'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Cập nhật địa chỉ thất bại!'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,
                     elevation: 2,
@@ -205,7 +241,7 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
                     ),
                   ),
                   child: const Text(
-                    'LƯU ĐỊA CHỈ',
+                    'CẬP NHẬT',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

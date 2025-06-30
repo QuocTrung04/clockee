@@ -1,4 +1,5 @@
 import 'package:clockee/data/data.dart';
+import 'package:clockee/models/address.dart';
 import 'package:clockee/models/user.dart';
 import 'package:clockee/screens/change_password_screen.dart';
 import 'package:clockee/services/api_service.dart';
@@ -141,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 );
 
                                 await ApiService.updateUser(
-                                  _user!.userId!,
+                                  _user!.userId,
                                   name: _nameController.text,
                                   email: _emailController.text,
                                   phone: _phoneController.text,

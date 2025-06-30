@@ -1,5 +1,6 @@
 class Address {
-  final int userId;
+  final int? receiveid;
+  final int? userId;
   final String name;
   final String phone;
   final String province;
@@ -9,6 +10,7 @@ class Address {
   final String addressDetail;
   final bool isDefault;
   Address({
+    this.receiveid,
     required this.userId,
     required this.name,
     required this.phone,
@@ -20,6 +22,7 @@ class Address {
     this.isDefault = false,
   });
   factory Address.fromJson(Map<String, dynamic> json) => Address(
+    receiveid: json['Receive_id'],
     userId: json['User_id'],
     name: json['Receive_name'] ?? '',
     phone: json['Receive_phone'] ?? '',
@@ -42,6 +45,7 @@ class Address {
     "Is_default": isDefault ? 1 : 0,
   };
   Address copyWith({
+    int? receiveid,
     int? userId,
     String? name,
     String? phone,
@@ -53,6 +57,7 @@ class Address {
     bool? isDefault,
   }) {
     return Address(
+      receiveid: receiveid ?? this.receiveid,
       userId: userId ?? this.userId,
       name: name ?? this.name,
       phone: phone ?? this.phone,

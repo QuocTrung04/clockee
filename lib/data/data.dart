@@ -79,4 +79,24 @@ class AppData extends ChangeNotifier {
     _addresses = fetchedList;
     notifyListeners();
   }
+
+  Future<bool> updateAddress(Address updatedAddress) async {
+    // Gọi API
+    final success = await ApiService.editAddress(
+      updatedAddress.receiveid!,
+      updatedAddress,
+    );
+
+    if (success) {
+      // Tìm vị trí của address cần update trong _addresses
+      final idx = _addresses.indexWhere(
+        (a) => a.receiveid == updatedAddress.receiveid,
+      );
+      if (idx != -1) {
+        _addresses[idx] = updatedAddress;
+        notifyListeners();
+      }
+    }
+    return success;
+  }
 }

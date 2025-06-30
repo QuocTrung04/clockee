@@ -333,7 +333,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
             child: Text(
-              'Mua ngay',
+              'Thêm vào giỏ',
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),

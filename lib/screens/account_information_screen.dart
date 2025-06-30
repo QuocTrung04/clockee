@@ -174,45 +174,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                     Icons.logout,
                     'Đăng xuất',
                     isLogout: true,
-                    // onTap: () async {
-                    //   final shouldLogout = await showDialog<bool>(
-                    //     context: context,
-                    //     builder: (context) => AlertDialog(
-                    //       title: Text('Xác nhận đăng xuất'),
-                    //       content: Text(
-                    //         'Bạn có chắc chắn muốn đăng xuất không?',
-                    //       ),
-                    //       actions: [
-                    //         TextButton(
-                    //           onPressed: () =>
-                    //               Navigator.pop(context, false), // Huỷ
-                    //           child: Text('Huỷ'),
-                    //         ),
-                    //         TextButton(
-                    //           onPressed: () =>
-                    //               Navigator.pop(context, true), // Đồng ý
-                    //           child: Text(
-                    //             'Đăng xuất',
-                    //             style: TextStyle(color: Colors.red),
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   );
 
-                    //   if (shouldLogout == true) {
-                    //     final prefs = await SharedPreferences.getInstance();
-                    //     await prefs.clear();
-                    //     if (!mounted) return;
-                    //     Navigator.pushAndRemoveUntil(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => const CustomMainScreen(),
-                    //       ),
-                    //       (route) => false,
-                    //     );
-                    //   }
-                    // },
                     onTap: () async {
                       final shouldLogout = await showDialog<bool>(
                         context: context,

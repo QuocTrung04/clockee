@@ -1,4 +1,5 @@
 import 'package:clockee/data/data.dart';
+import 'package:clockee/data/favorite_notifier.dart';
 import 'package:clockee/screens/pay_screen.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -37,16 +38,17 @@ class _CartItemScreenState extends State<CartItemScreen>
     await _controler.reverse();
     widget.onClose();
   }
-  
+
   @override
   void dispose() {
     _controler.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final CartItem = Provider.of<AppData>(context).cartItems;
+    final UserData = Provider.of<AppData>(context).user;
     return SafeArea(
       child: Material(
         color: Colors.black87,
@@ -104,7 +106,8 @@ class _CartItemScreenState extends State<CartItemScreen>
                                 ),
                               )
                             : ListView.builder(
-                                itemCount: CartItem.length, // 👈 ĐỪNG quên thêm dòng này!
+                                itemCount: CartItem
+                                    .length, // 👈 ĐỪNG quên thêm dòng này!
                                 itemBuilder: (context, index) {
                                   final item = CartItem[index];
                                   return CartItemWidget(
@@ -112,16 +115,37 @@ class _CartItemScreenState extends State<CartItemScreen>
                                     onIncrease: () {
                                       setState(() {
                                         item.quantity++;
+                                        ApiService.addToCart(
+                                          UserData!.userId,
+                                          item.productId,
+                                        );
                                       });
                                     },
                                     onDecrease: () {
                                       setState(() {
-                                        if (item.quantity > 1) item.quantity--;
+                                        if (item.quantity > 1) {
+                                          item.quantity--;
+                                          ApiService.subtractFromCart(
+                                            UserData!.userId,
+                                            item.productId,
+                                          );
+                                        } else {
+                                          CartItem.removeAt(index);
+                                          ApiService.removeFromCart(
+                                            UserData!.userId,
+                                            item.productId,
+                                          );
+                                        }
                                       });
                                     },
                                     onDelete: () {
                                       setState(() {
                                         CartItem.removeAt(index);
+                                        ApiService.removeFromCart(
+                                          UserData!.userId,
+                                          item.productId,
+                                        );
+                                        favoriteChangedNotifier.value++;
                                       });
                                     },
                                   );
@@ -340,10 +364,7 @@ class CartItemWidget extends StatelessWidget {
               children: [
                 Text(item.name),
                 SizedBox(height: 7),
-                Text(
-                  item.model,
-                  style: TextStyle(color: Color(0xFF662D91)),
-                ),
+                Text(item.model, style: TextStyle(color: Color(0xFF662D91))),
                 SizedBox(height: 7),
                 Row(
                   children: [
