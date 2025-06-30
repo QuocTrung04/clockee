@@ -11,9 +11,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppData extends ChangeNotifier {
   User? _user;
   List<CartItem> _cartItems = [];
+  List<Address> _addresses = [];
 
   User? get user => _user;
   List<CartItem> get cartItems => _cartItems;
+  List<Address> get addresses => _addresses;
 
   Future<void> initUser() async {
     _user = await loadUserFromPrefs();
@@ -64,23 +66,17 @@ class AppData extends ChangeNotifier {
       notifyListeners();
     }
   }
-}
 
-final List<Address> address = [
-  Address(
-    name: 'Hoàng Tiến',
-    phone: '0392469847',
-    province: 'TP. Hồ Chí Minh',
-    district: 'Quận Gò Vấp',
-    wards: 'Phường 10',
-    street: '417/69/27, Quang Trung',
-  ),
-  Address(
-    name: 'Quốc Trung',
-    phone: '0392469847',
-    province: 'TP. Hồ Chí Minh',
-    district: 'Quận Gò Vấp',
-    wards: 'Phường 10',
-    street: '417/69/27, Quang Trung',
-  ),
-];
+  Future<void> logout() async {
+    await clearUserPrefs(); // Xóa local
+    _user = null;
+    _cartItems.clear(); // Xóa giỏ hàng
+    notifyListeners();
+  }
+
+  Future<void> fetchAddressList(int userId) async {
+    final fetchedList = await ApiService.fetchAddrress(userId);
+    _addresses = fetchedList;
+    notifyListeners();
+  }
+}

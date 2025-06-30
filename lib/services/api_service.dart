@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:clockee/data/data.dart';
+import 'package:clockee/models/address.dart';
 import 'package:clockee/models/cart.dart';
 import 'package:clockee/models/sanpham.dart';
 import 'package:clockee/models/user.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -28,31 +26,30 @@ class ApiService {
   }
 
   //API ĐĂNG NHẬP
-static Future<User?> login(String username, String password) async {
-  final url = Uri.parse('http://103.77.243.218/api/login');
+  static Future<User?> login(String username, String password) async {
+    final url = Uri.parse('http://103.77.243.218/api/login');
 
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: {'username': username, 'password': password},
-  );
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: {'username': username, 'password': password},
+    );
 
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
 
-    if (data['User_id'] != null && data['Username'] == username) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
-      await prefs.setString('username', data['Username']);
-      await prefs.setInt('userid', data['User_id']);
+      if (data['User_id'] != null && data['Username'] == username) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('username', data['Username']);
+        await prefs.setInt('userid', data['User_id']);
 
-      return User.fromJson(data); // 👈 trả về user để gán ngoài
+        return User.fromJson(data); // 👈 trả về user để gán ngoài
+      }
     }
+
+    return null;
   }
-
-  return null;
-}
-
 
   //API ĐĂNG KÝ
 
@@ -193,6 +190,7 @@ static Future<User?> login(String username, String password) async {
     }
   }
 
+  //API XÓA YÊU THÍCH
   static Future<bool> removeFavoriteProduct({
     required int userId,
     required int productId,
@@ -243,8 +241,9 @@ static Future<User?> login(String username, String password) async {
     }
   }
 
+  //API GIỎ HÀNG
   static Future<List<CartItem>> fetchCartItem(int userId) async {
-      final url = Uri.parse('http://103.77.243.218/orderitem/$userId');
+    final url = Uri.parse('http://103.77.243.218/orderitem/$userId');
 
     try {
       final response = await http.get(url);
@@ -257,6 +256,53 @@ static Future<User?> login(String username, String password) async {
       }
     } catch (e) {
       throw Exception('Failed to fetch products: $e');
+    }
+  }
+
+  //API ĐỊA CHỈ
+  static Future<List<Address>> fetchAddrress(int userId) async {
+    final url = Uri.parse('http://103.77.243.218/receiveaddress/$userId');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final body = response.body.trim();
+
+      if (body.isEmpty || body == 'null' || body == '{}') {
+        return [];
+      }
+
+      final decoded = json.decode(body);
+
+      if (decoded is List) {
+        return decoded.map((e) => Address.fromJson(e)).toList();
+      }
+      if (decoded is Map && decoded['message'] != null) {
+        return [];
+      }
+      return [];
+    } else {
+      print('Lỗi khi lấy địa chỉ: ${response.statusCode} - ${response.body}');
+      throw Exception(
+        'Lỗi khi lấy địa chỉ: ${response.statusCode} - ${response.body}',
+      );
+    }
+  }
+
+  //API THÊM ĐỊA CHỈ
+  static Future<bool> addAddress(Address address) async {
+    final url = Uri.parse('http://103.77.243.218/api/receiveaddress');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(address.toJson()),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // Thêm thành công
+      return true;
+    } else {
+      print('Lỗi khi thêm địa chỉ: ${response.statusCode} - ${response.body}');
+      return false;
     }
   }
 }

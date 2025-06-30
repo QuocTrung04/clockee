@@ -267,17 +267,7 @@ class _StateLoginScreen extends State<LoginScreen> {
                                     if (!mounted) return;
 
                                     if (userLogin != null) {
-                                      // final prefs =
-                                      //     await SharedPreferences.getInstance();
-                                      // await prefs.setString(
-                                      //   "UserInfo",
-                                      //   jsonEncode(userLogin.toJson()),
-                                      // );
-                                      // await prefs.setBool('isLoggedIn', true);
                                       await saveUserToPrefs(userLogin);
-                                      print(
-                                        'hu hu hu hihiihi ${userLogin.toJson()}',
-                                      );
                                       Provider.of<AppData>(
                                         context,
                                         listen: false,

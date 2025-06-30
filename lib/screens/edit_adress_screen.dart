@@ -17,6 +17,8 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
   late TextEditingController _districtController;
   late TextEditingController _wardsController;
   late TextEditingController _streetController;
+  late TextEditingController _addressDetailController;
+  bool _isDefault = false;
 
   @override
   void initState() {
@@ -25,8 +27,12 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
     _phoneController = TextEditingController(text: widget.address.phone);
     _provinceController = TextEditingController(text: widget.address.province);
     _districtController = TextEditingController(text: widget.address.district);
-    _wardsController = TextEditingController(text: widget.address.wards);
+    _wardsController = TextEditingController(text: widget.address.commune);
     _streetController = TextEditingController(text: widget.address.street);
+    _addressDetailController = TextEditingController(
+      text: widget.address.addressDetail,
+    );
+    _isDefault = widget.address.isDefault;
   }
 
   @override
@@ -123,6 +129,36 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
                 controller: _streetController,
                 label: 'Đường',
                 border: border,
+              ),
+              _buildTextField(
+                controller: _addressDetailController,
+                label: 'Địa chỉ chi tiết',
+                border: border,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Text(
+                      'Đặt làm địa chỉ mặc định',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(width: 5),
+                    Switch(
+                      value: _isDefault,
+                      onChanged: (val) {
+                        setState(() {
+                          _isDefault = val;
+                        });
+                      },
+                      activeColor: Color(0xFF662D91),
+                    ),
+                  ],
+                ),
               ),
 
               const SizedBox(height: 100),

@@ -21,19 +21,39 @@ class _StateRegisterScreen extends State<RegisterScreen> {
       TextEditingController();
   Future<void> _dangKy() async {
     if (_passwordController.text != _corfirmPasswordController.text) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Mật khẩu không khớp')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Mật khẩu không khớp'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    } else if (_nameController.text.contains(RegExp(r'\s'))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Tài khoản không được chứa khoảng trống trống'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    } else if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _corfirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vui lòng nhập đầy đủ thông tin'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
-
     final success = await ApiService.registerUser(
       name: _nameController.text,
       phone: _phoneController.text,
       email: _emailController.text,
       password: _passwordController.text,
     );
-
     if (!mounted) {
       return;
     }

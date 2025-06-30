@@ -1,8 +1,11 @@
 import 'package:clockee/data/data.dart';
+import 'package:clockee/models/address.dart';
 import 'package:clockee/screens/add_adress_screen.dart';
 import 'package:clockee/screens/edit_adress_screen.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:provider/provider.dart';
 
 class AddressScreen extends StatefulWidget {
   const AddressScreen({super.key});
@@ -12,8 +15,22 @@ class AddressScreen extends StatefulWidget {
 }
 
 class _AddressScreenState extends State<AddressScreen> {
+  int? _selectedAddressId;
+  @override
+  void initState() {
+    super.initState();
+    final userId =
+        Provider.of<AppData>(context, listen: false).user?.userId ?? 0;
+    Provider.of<AppData>(context, listen: false).fetchAddressList(userId);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final addressList = Provider.of<AppData>(context).addresses;
+    if (addressList.isNotEmpty && !addressList.any((a) => a.isDefault)) {
+      // Nếu không có địa chỉ nào là mặc định, set địa chỉ đầu tiên ở UI thành mặc định
+      addressList[0] = addressList[0].copyWith(isDefault: true);
+    }
     return SafeArea(
       child: Material(
         color: Color(0xFFF3F3F3),
@@ -43,26 +60,42 @@ class _AddressScreenState extends State<AddressScreen> {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(20),
-              child: Text(
-                'ĐỊA CHỈ KHÁC',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
+            addressList.isEmpty
+                ? Expanded(
+                    child: const Center(
+                      child: Text(
+                        'Chưa có địa chỉ',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF662D91),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                : const Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Text(
+                      'ĐỊA CHỈ KHÁC',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
             Expanded(
               child: ListView.separated(
-                itemCount: address.length,
+                itemCount: addressList.length,
                 separatorBuilder: (context, index) => const Divider(),
                 itemBuilder: (context, index) {
-                  final item = address[index];
+                  final item = addressList[index];
                   return ListTile(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              EditAdressScreen(address: address[index]),
+                              EditAdressScreen(address: addressList[index]),
                         ),
                       );
                     },
@@ -79,11 +112,36 @@ class _AddressScreenState extends State<AddressScreen> {
                           item.phone,
                           style: TextStyle(color: Colors.grey.shade600),
                         ),
+                        if (item.isDefault)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xFF662D91),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Text(
+                                'Mặc định',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                    subtitle: Text(
-                      '${item.street},\n ${item.wards}, ${item.district}, ${item.province}',
-                    ),
+                    subtitle: item.addressDetail.isEmpty
+                        ? Text(
+                            '${item.street},\n${item.commune}, ${item.district}, ${item.province}',
+                          )
+                        : Text(
+                            '${item.addressDetail}, ${item.street},\n${item.commune}, ${item.district}, ${item.province}',
+                          ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 4,

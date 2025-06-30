@@ -18,7 +18,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  User? user; 
+  User? user;
 
   int tinhSoLuong() {
     final cart = Provider.of<AppData>(context).cartItems;
@@ -29,12 +29,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return soluong;
   }
 
-   @override
+  @override
   void initState() {
     super.initState();
     user = Provider.of<AppData>(context, listen: false).user;
 
-    if(user != null){
+    if (user != null) {
       _loadCart();
     }
   }
@@ -119,5 +119,3 @@ class _CustomAppBarState extends State<CustomAppBar> {
     );
   }
 }
-
-

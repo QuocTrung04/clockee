@@ -18,3 +18,12 @@ Future<void> saveUserToPrefs(User user) async {
     prefs.setInt('userid', user.userId!);
   }
 }
+
+Future<void> clearUserPrefs() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('user'); // Xóa info user
+  await prefs.remove('userid'); // Xóa userId nếu có
+  // Nếu có lưu thêm 'cart', 'favorites'... thì cũng remove luôn
+  await prefs.remove('cart');
+  await prefs.remove('favorites');
+}

@@ -35,7 +35,12 @@ class _CheckoutPageState extends State<PayScreen> {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             SizedBox(height: 6),
-            Text('Nguyễn Văn A', style: TextStyle(fontSize: 15)),
+            Row(
+              children: [
+                Text('Nguyễn Văn A', style: TextStyle(fontSize: 15)),
+                Text('\t| 0345678910', style: TextStyle(color: Colors.grey)),
+              ],
+            ),
             Text(
               '123 Đường ABC, Quận 1, TP. HCM',
               style: TextStyle(fontSize: 15),

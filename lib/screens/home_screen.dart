@@ -577,7 +577,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                         ),
                       ),
                       Text(
-                        'Giá KM:${_formatCurrency(widget.sanPham.sellPrice!)}đ',
+                        'Giá KM: ${_formatCurrency(widget.sanPham.sellPrice!)}đ',
                         style: const TextStyle(
                           color: Color(0xFF662D91),
                           fontWeight: FontWeight.bold,
