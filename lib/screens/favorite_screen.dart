@@ -46,7 +46,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     return ValueListenableBuilder(
       valueListenable: favoriteChangedNotifier,
       builder: (context, value, child) {
-        print('FavoriteScreen rebuild, value = $value');
         return FutureBuilder<List<Product>>(
           future: fetchFavoriteProducts(),
           builder: (context, snapshot) {
@@ -137,9 +136,13 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                       );
                       if (!mounted) return;
                       if (success) {
-                        favoriteChangedNotifier.value =
-                            !favoriteChangedNotifier.value;
-                        print(widget.sanPham.favorite);
+                        setState(() {
+                          widget.sanPham.favorite = 0;
+                        });
+                        favoriteChangedNotifier.value++;
+                        print(
+                          'notifier hashCode: ${favoriteChangedNotifier.hashCode}',
+                        );
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Đã xóa khỏi yêu thích'),

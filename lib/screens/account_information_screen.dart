@@ -48,9 +48,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
         userId = id;
         _displayName = user.name;
       });
-      debugPrint(
-        "Fetched displayName: $_displayName",
-      );
+      debugPrint("Fetched displayName: $_displayName");
     } catch (e) {
       debugPrint('Error fetching user: $e');
     }
@@ -205,7 +203,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                       if (shouldLogout == true) {
                         final prefs = await SharedPreferences.getInstance();
                         await prefs.clear();
-
+                        if (!mounted) return;
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

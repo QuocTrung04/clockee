@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:clockee/data/user_prefs.dart';
 import 'package:clockee/models/address.dart';
 import 'package:clockee/models/user.dart';
 import 'package:clockee/models/cart.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class AppData extends ChangeNotifier {
   User? _user;
@@ -15,8 +15,14 @@ class AppData extends ChangeNotifier {
   User? get user => _user;
   List<CartItem> get cartItems => _cartItems;
 
-  void setUser(User user) {
+  Future<void> initUser() async {
+    _user = await loadUserFromPrefs();
+    notifyListeners();
+  }
+
+  void setUser(User user) async {
     _user = user;
+    await saveUserToPrefs(user);
     notifyListeners(); // Cập nhật cho tất cả listener
   }
 
@@ -42,7 +48,7 @@ class AppData extends ChangeNotifier {
 
   Future<void> loadUserFromLocal() async {
     final prefs = await SharedPreferences.getInstance();
-    final userJson = prefs.getString('UserInfo');
+    final userJson = prefs.getString('user');
     if (userJson != null) {
       final userMap = jsonDecode(userJson);
       _user = User.fromJson(userMap);

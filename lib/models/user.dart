@@ -52,7 +52,7 @@ class User {
   final String? name;
   final String? phone;
   final String userName;
-  final String? isAdmin;
+  final int? isAdmin;
   final DateTime? birthday;
   final int? sex;
   final int? isDelete;
@@ -84,16 +84,33 @@ class User {
   }
 
   factory User.fromJson(Map<String, dynamic> json) {
+    // return User(
+    //   userId: json['User_id'],
+    //   email: json['Email'],
+    //   name: json['Name'],
+    //   phone: json['Phone'],
+    //   userName: json['Username'],
+    //   isAdmin: json['IsAdmin'],
+    //   birthday: json['Birthday'] != null
+    //       ? DateTime.tryParse(json['Birthday'])
+    //       : null,
+    //   sex: json['Sex'],
+    //   isDelete: json['IsDelete'],
+    // );
     return User(
-      userId: json['User_id'],
-      email: json['Email'],
-      name: json['Name'],
-      phone: json['Phone'],
-      userName: json['Username'],
-      isAdmin: json['IsAdmin'],
-      birthday: json['Birthday'] != null ? DateTime.tryParse(json['Birthday']) : null,
-      sex: json['Sex'],
-      isDelete: json['IsDelete'],
+      userId: int.tryParse(json['User_id'].toString()) ?? 0,
+      email: json['Email'] as String?,
+      name: json['Name'] as String?,
+      phone: json['Phone'] as String?,
+      userName: json['Username']?.toString() ?? '',
+      isAdmin: json['Isadmin'],
+      birthday: json['Birthday'] != null
+          ? DateTime.tryParse(json['Birthday'].toString())
+          : null,
+      sex: json['Sex'] != null ? int.tryParse(json['Sex'].toString()) : null,
+      isDelete: json['Isdeleted'] != null
+          ? int.tryParse(json['Isdeleted'].toString())
+          : null,
     );
   }
   Map<String, dynamic> toJson() {
@@ -104,14 +121,14 @@ class User {
       'Phone': phone,
       'Username': userName,
       'IsAdmin': isAdmin,
-      'Birthday': birthday!.toIso8601String(),
+      'Birthday': birthday?.toIso8601String(),
       'Sex': sex,
       'IsDelete': isDelete,
     };
   }
 
   User copyWith({
-    String? isAdmin,
+    int? isAdmin,
     String? password,
     String? name,
     int? id,
