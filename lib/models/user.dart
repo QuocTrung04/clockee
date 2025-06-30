@@ -47,7 +47,7 @@
 // }
 
 class User {
-  final int? userId;
+  final int userId;
   final String? email;
   final String? name;
   final String? phone;

@@ -1,7 +1,5 @@
 import 'dart:ui';
-import 'package:clockee/data/user_prefs.dart';
 import 'package:clockee/models/cart.dart';
-
 import 'package:clockee/data/favorite_notifier.dart';
 import 'package:clockee/screens/cart_item_screen.dart';
 import 'package:clockee/screens/product_details_screen.dart';
@@ -24,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   User user = User(
-    userId: null,
+    userId: 0,
     email: '',
     name: '',
     phone: '',
@@ -392,6 +390,8 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final CartItems = Provider.of<AppData>(context).cartItems;
+    final UserData = Provider.of<AppData>(context).user;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -573,7 +573,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                           decoration: TextDecoration.lineThrough,
                           decorationColor: Colors.grey,
                           color: Color(0xFFCFCFCF),
-                          fontSize: 15,
+                          fontSize: 14,
                         ),
                       ),
                       Text(
@@ -581,13 +581,25 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                         style: const TextStyle(
                           color: Color(0xFF662D91),
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 16,
                         ),
                       ),
+                      SizedBox(height: 8,)
                     ],
                   ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                ApiService.addToCart(UserData!.userId, widget.sanPham.productId);
+                ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Đã thêm sản phẩm vào giỏ'),
+                              ),
+                            );
+                            favoriteChangedNotifier.value++;
+                print("Đã thêm sản phẩm vào giỏ");
+                final cart = CartItem(productId: widget.sanPham.productId, imageUrl: widget.sanPham.imageUrl.toString(), name: widget.sanPham.name.toString(), actualPrice: widget.sanPham.actualPrice!, price: widget.sanPham.sellPrice!, model: widget.sanPham.watchModel.toString(), quantity: 1);
+                Provider.of<AppData>(context, listen: false).addToCart(cart);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF662D91),
                 foregroundColor: Colors.white,

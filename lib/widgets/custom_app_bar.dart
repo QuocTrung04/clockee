@@ -22,7 +22,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   int tinhSoLuong() {
     final cart = Provider.of<AppData>(context).cartItems;
-    int soluong = 0;
+    int soluong = 0; 
     for (var itemsl in cart) {
       soluong += itemsl.quantity;
     }
@@ -41,15 +41,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   void _loadCart() async {
     final appData = Provider.of<AppData>(context, listen: false);
-    print("day la load cart");
-
     if (user != null) {
       try {
         final items = await ApiService.fetchCartItem(user!.userId!);
-        appData.setCart(items); // 👈 Gán vào AppData
-        print("đã gán cartitem");
+        appData.setCart(items);
       } catch (e) {
-        print('Lỗi khi lấy giỏ hàng: $e');
       }
     }
   }

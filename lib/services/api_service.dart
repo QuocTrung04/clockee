@@ -259,4 +259,46 @@ static Future<User?> login(String username, String password) async {
       throw Exception('Failed to fetch products: $e');
     }
   }
+
+  static Future<bool> addToCart(int userId, int productId) async {
+    final url = Uri.parse('http://103.77.243.218/api/cart/add');
+    final response = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'User_id': userId, 'Product_id': productId}));
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Add to cart failed: ${response.body}');
+      return false;
+    }
+  }
+
+  static Future<bool> subtractFromCart(int userId, int productId) async {
+    final url = Uri.parse('http://103.77.243.218/api/cart/subtract');
+    final response = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'User_id': userId, 'Product_id': productId}));
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Subtract from cart failed: ${response.body}');
+      return false;
+    }
+  }
+
+  static Future<bool> removeFromCart(int userId, int productId) async {
+    final url = Uri.parse('http://103.77.243.218/api/cart/remove');
+    final response = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'User_id': userId, 'Product_id': productId}));
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Remove from cart failed: ${response.body}');
+      return false;
+    }
+  }
 }

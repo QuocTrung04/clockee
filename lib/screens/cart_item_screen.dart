@@ -47,6 +47,7 @@ class _CartItemScreenState extends State<CartItemScreen>
   @override
   Widget build(BuildContext context) {
     final CartItem = Provider.of<AppData>(context).cartItems;
+    final UserData = Provider.of<AppData>(context).user;
     return SafeArea(
       child: Material(
         color: Colors.black87,
@@ -112,16 +113,26 @@ class _CartItemScreenState extends State<CartItemScreen>
                                     onIncrease: () {
                                       setState(() {
                                         item.quantity++;
+                                        ApiService.addToCart(UserData!.userId, item.productId);
                                       });
                                     },
                                     onDecrease: () {
                                       setState(() {
-                                        if (item.quantity > 1) item.quantity--;
+                                        if (item.quantity > 1) {
+                                          item.quantity--;
+                                          ApiService.subtractFromCart(UserData!.userId, item.productId);
+
+                                        }
+                                        else{
+                                          CartItem.removeAt(index);
+                                          ApiService.removeFromCart(UserData!.userId, item.productId);
+                                        }
                                       });
                                     },
                                     onDelete: () {
                                       setState(() {
                                         CartItem.removeAt(index);
+                                        ApiService.removeFromCart(UserData!.userId, item.productId);
                                       });
                                     },
                                   );
