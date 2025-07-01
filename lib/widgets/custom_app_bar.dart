@@ -49,16 +49,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   void _loadCart() async {
     final appData = Provider.of<AppData>(context, listen: false);
-    print("day la load cart");
 
     if (user != null) {
       try {
         final items = await ApiService.fetchCartItem(user!.userId!);
-        appData.setCart(items); // 👈 Gán vào AppData
-        print("đã gán cartitem");
-      } catch (e) {
-        print('Lỗi khi lấy giỏ hàng: $e');
-      }
+        appData.setCart(items);
+      } catch (e) {}
     }
   }
 

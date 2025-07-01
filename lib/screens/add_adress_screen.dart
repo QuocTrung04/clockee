@@ -23,9 +23,9 @@ class _AddAdressScreenState extends State<AddAdressScreen> {
   bool _isDefault = false;
 
   void _addAddress() async {
-    final userId =
-        Provider.of<AppData>(context, listen: false).user?.userId ?? 0;
+    final userId = Provider.of<AppData>(context, listen: false).user?.userId ?? 0;
     Address newAddress = Address(
+      receiveid: null,
       userId: userId,
       name: _nameController.text,
       phone: _phoneController.text,
