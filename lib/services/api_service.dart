@@ -372,4 +372,21 @@ class ApiService {
       return false;
     }
   }
+  static Future<bool> createOrder(int userid, int receiveid, int paymentmethod) async {
+    final url = Uri.parse('http://103.77.243.218/api/createorder');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'User_id': userid, 'Receive_id': receiveid, 'Payment_method': paymentmethod}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // Thêm thành công
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
+
+  

@@ -5,6 +5,7 @@ import 'package:clockee/screens/change_password_screen.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -136,19 +137,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () async {
-                              try {
-                                final birthday = DateTime.parse(
-                                  _birthdayController.text,
+                              final parsedBirthday = parseBirthday(
+                                _birthdayController.text,
+                              );
+
+                              if (parsedBirthday == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Ngày sinh không hợp lệ (dd/MM/yyyy)',
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
                                 );
+                                return;
+                              }
+
+                              try {
+                                // final birthday = DateTime.parse(
+                                //   _birthdayController.text,
+                                // );
 
                                 await ApiService.updateUser(
                                   _user!.userId,
                                   name: _nameController.text,
                                   email: _emailController.text,
                                   phone: _phoneController.text,
-                                  birthday: DateTime.parse(
-                                    _birthdayController.text,
-                                  ),
+                                  birthday: parsedBirthday,
                                   sex: _selectedGender ?? 1,
                                 );
                                 if (!mounted) return;
@@ -234,9 +249,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String formatDate(DateTime date) {
-    return '${date.year.toString().padLeft(4, '0')}-'
-        '${date.month.toString().padLeft(2, '0')}-'
-        '${date.day.toString().padLeft(2, '0')}';
+    return DateFormat('dd/MM/yyyy').format(date);
+  }
+
+  DateTime? parseBirthday(String dateStr) {
+    try {
+      return DateFormat('dd/MM/yyyy').parse(dateStr);
+    } catch (e) {
+      return null;
+    }
   }
 
   Widget _buildInfoTextField(String label, TextEditingController controller) {

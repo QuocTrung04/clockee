@@ -1,5 +1,8 @@
 import 'package:clockee/data/data.dart';
+import 'package:clockee/models/address.dart';
 import 'package:clockee/models/cart.dart';
+import 'package:clockee/screens/qr_pay_screen.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +16,7 @@ class PayScreen extends StatefulWidget {
 
 class _CheckoutPageState extends State<PayScreen> {
   int _selectedPaymentMethod = 0;
+  Address? selectedAddress;
 
   final paymentMethods = [
     {'icon': Icons.credit_card, 'label': 'Tài khoản ngân hàng'},
@@ -22,6 +26,12 @@ class _CheckoutPageState extends State<PayScreen> {
   @override
   Widget build(BuildContext context) {
     final cartItem = Provider.of<AppData>(context).cartItems;
+    final userData = Provider.of<AppData>(context).user;
+    Provider.of<AppData>(context).fetchAddressList(userData!.userId);
+    final listAddress = Provider.of<AppData>(context).addresses;
+
+    selectedAddress = listAddress.isNotEmpty ? listAddress[3] : null;
+
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -37,26 +47,32 @@ class _CheckoutPageState extends State<PayScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Địa chỉ
-            Text(
-              'Địa Chỉ',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            DropdownButton<Address>(
+              isExpanded: true,
+
+              value: selectedAddress,
+              items: listAddress.map((address) {
+                return DropdownMenuItem<Address>(
+                  value: address,
+                  child: Text(
+                    address.addressDetail.isEmpty
+                        ? '${address.street}, ${address.commune}, ${address.district}, ${address.province}'
+                        : '${address.addressDetail}, ${address.street}, ${address.commune}, ${address.district}, ${address.province}',
+                  ),
+                );
+              }).toList(),
+              onChanged: (Address? newValue) {
+                setState(() {
+                  selectedAddress = newValue;
+                });
+              },
             ),
-            SizedBox(height: 6),
-            Row(
-              children: [
-                Text('Nguyễn Văn A', style: TextStyle(fontSize: 15)),
-                Text('\t| 0345678910', style: TextStyle(color: Colors.grey)),
-              ],
-            ),
-            Text(
-              '123 Đường ABC, Quận 1, TP. HCM',
-              style: TextStyle(fontSize: 15),
-            ),
+
             Divider(height: 32, thickness: 1),
 
             ListView.builder(
-              shrinkWrap: true, // để ListView trong SingleChildScrollView
-              physics: NeverScrollableScrollPhysics(), // tắt cuộn riêng
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: cartItem.length,
               itemBuilder: (context, index) {
                 final product = cartItem[index];
@@ -124,9 +140,20 @@ class _CheckoutPageState extends State<PayScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('Đã thanh toán!')));
+                ApiService.createOrder(
+                  userData.userId,
+                  selectedAddress!.receiveid!,
+                  _selectedPaymentMethod,
+                );
+                if (_selectedPaymentMethod == 0) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => QRPayScreen()),
+                  );
+                }
+                // ScaffoldMessenger.of(context)
+                //   ..hideCurrentSnackBar()
+                //   ..showSnackBar(SnackBar(content: Text('Đã thanh toán!')));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,

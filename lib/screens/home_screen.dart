@@ -456,7 +456,9 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             setState(() {
                               favorite = 0;
                             });
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
                               const SnackBar(
                                 content: Text('Đã xóa khỏi yêu thích'),
                               ),
@@ -473,7 +475,9 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             setState(() {
                               favorite = 1;
                             });
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
                               const SnackBar(
                                 content: Text('Đã thêm vào yêu thích'),
                               ),
@@ -483,8 +487,10 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                         }
 
                         if (!success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(
+                              const SnackBar(
                               content: Text('Không thể cập nhật yêu thích'),
                             ),
                           );

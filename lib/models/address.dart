@@ -10,7 +10,7 @@ class Address {
   final String addressDetail;
   final bool isDefault;
   Address({
-    this.receiveid,
+    required this.receiveid,
     required this.userId,
     required this.name,
     required this.phone,
@@ -69,4 +69,12 @@ class Address {
       isDefault: isDefault ?? this.isDefault,
     );
   }
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Address && other.receiveid == receiveid;
+  }
+
+  @override
+  int get hashCode => receiveid.hashCode;
 }

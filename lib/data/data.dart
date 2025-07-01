@@ -81,21 +81,41 @@ class AppData extends ChangeNotifier {
   }
 
   Future<bool> updateAddress(Address updatedAddress) async {
-    // Gọi API
     final success = await ApiService.editAddress(
       updatedAddress.receiveid!,
       updatedAddress,
     );
 
     if (success) {
-      // Tìm vị trí của address cần update trong _addresses
-      final idx = _addresses.indexWhere(
-        (a) => a.receiveid == updatedAddress.receiveid,
-      );
-      if (idx != -1) {
-        _addresses[idx] = updatedAddress;
-        notifyListeners();
+      // Nếu update thành mặc định thì set các địa chỉ khác về không mặc định
+      if (updatedAddress.isDefault) {
+        _addresses = _addresses.map((a) {
+          if (a.receiveid == updatedAddress.receiveid) {
+            return updatedAddress;
+          } else if (a.isDefault) {
+            return a.copyWith(isDefault: false);
+          }
+          return a;
+        }).toList();
+      } else {
+        final idx = _addresses.indexWhere(
+          (a) => a.receiveid == updatedAddress.receiveid,
+        );
+        if (idx != -1) {
+          _addresses[idx] = updatedAddress;
+        }
       }
+      notifyListeners();
+    }
+
+    return success;
+  }
+
+  Future<bool> addAddress(Address addAddress) async {
+    final success = await ApiService.addAddress(addAddress);
+    if (success) {
+      _addresses.add(addAddress);
+      notifyListeners();
     }
     return success;
   }

@@ -26,6 +26,7 @@ class _AddAdressScreenState extends State<AddAdressScreen> {
     final userId =
         Provider.of<AppData>(context, listen: false).user?.userId ?? 0;
     Address newAddress = Address(
+      receiveid: null,
       userId: userId,
       name: _nameController.text,
       phone: _phoneController.text,
@@ -35,7 +36,10 @@ class _AddAdressScreenState extends State<AddAdressScreen> {
       street: _streetController.text,
       addressDetail: _detailController.text,
     );
-    bool result = await ApiService.addAddress(newAddress);
+    final result = await Provider.of<AppData>(
+      context,
+      listen: false,
+    ).addAddress(newAddress);
     if (result) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
