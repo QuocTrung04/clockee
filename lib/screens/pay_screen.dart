@@ -148,7 +148,11 @@ class _CheckoutPageState extends State<PayScreen> {
                 if (_selectedPaymentMethod == 0) {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => QRPayScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => QRPayScreen(
+                        amount: TotalPrice(cartItem) + ShippingCost(cartItem),
+                      ),
+                    ),
                   );
                 }
                 // ScaffoldMessenger.of(context)

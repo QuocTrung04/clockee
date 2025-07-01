@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class QRPayScreen extends StatelessWidget {
-  //final double amount;
+  final double amount;
 
-  QRPayScreen({
-    super.key,
-    //required this.amount,
-  });
+  QRPayScreen({super.key, required this.amount});
 
   final formatter = NumberFormat('#,##0', 'vi_VN');
 
@@ -61,8 +58,7 @@ class QRPayScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'thanh toan',
-                //'${formatter.format(amount).replaceAll(',', '.')} đ',
+                '${formatter.format(amount).replaceAll(',', '.')} đ',
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
