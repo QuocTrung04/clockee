@@ -1,5 +1,9 @@
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vietqr_flutter/vietqr_flutter.dart';
+
+
 
 class QRPayScreen extends StatelessWidget {
   final double amount;
@@ -10,6 +14,12 @@ class QRPayScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bankInfo = ApiService.fetchBankInfo();
+    final String dataToEncode;
+    String qrCode = VietQRGenerator.generate(
+    accountNumber: '19745371',
+    bankCode: 'ACB',
+  );
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFF5F5F5),
@@ -35,7 +45,7 @@ class QRPayScreen extends StatelessWidget {
               ),
               const SizedBox(height: 30),
 
-              /// Placeholder QR Code
+              /// QR Code hiển thị ở đây
               Container(
                 width: 220,
                 height: 220,
@@ -44,8 +54,13 @@ class QRPayScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.grey.shade400, width: 2),
                 ),
-                child: const Center(
-                  child: Icon(Icons.qr_code_2, size: 100, color: Colors.grey),
+                child: Center(
+                  child: generatorQR(
+                    vietQr: qrCode,
+                    image: const AssetImage('assets/images/bank.png'),
+                    sizeQr: 300,
+                    sizeEmbeddingImage: 50
+                  )
                 ),
               ),
 

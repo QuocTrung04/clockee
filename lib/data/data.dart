@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:clockee/data/user_prefs.dart';
 import 'package:clockee/models/address.dart';
+import 'package:clockee/models/order.dart';
 import 'package:clockee/models/user.dart';
 import 'package:clockee/models/cart.dart';
 import 'package:clockee/services/api_service.dart';
@@ -12,10 +13,12 @@ class AppData extends ChangeNotifier {
   User? _user;
   List<CartItem> _cartItems = [];
   List<Address> _addresses = [];
+  ReturnOrder? _returnOrder;
 
   User? get user => _user;
   List<CartItem> get cartItems => _cartItems;
   List<Address> get addresses => _addresses;
+  ReturnOrder? get returnOrder => _returnOrder;
 
   Future<void> initUser() async {
     _user = await loadUserFromPrefs();
@@ -30,6 +33,11 @@ class AppData extends ChangeNotifier {
 
   void setCart(List<CartItem> items) {
     _cartItems = items;
+    notifyListeners();
+  }
+
+  void setReturnOrder(ReturnOrder returnOrder) {
+    _returnOrder = returnOrder;
     notifyListeners();
   }
 

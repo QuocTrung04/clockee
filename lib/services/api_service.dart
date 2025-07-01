@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:clockee/models/address.dart';
+import 'package:clockee/models/bankinfomation.dart';
 import 'package:clockee/models/cart.dart';
+import 'package:clockee/models/order.dart';
 import 'package:clockee/models/sanpham.dart';
 import 'package:clockee/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -372,21 +374,50 @@ class ApiService {
       return false;
     }
   }
-  static Future<bool> createOrder(int userid, int receiveid, int paymentmethod) async {
+ static Future<ReturnOrder?> createOrder(int userId, int receiveId, int paymentMethod) async {
     final url = Uri.parse('http://103.77.243.218/api/createorder');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'User_id': userid, 'Receive_id': receiveid, 'Payment_method': paymentmethod}),
-    );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Thêm thành công
-      return true;
-    } else {
-      return false;
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'User_id': userId,
+          'Receive_id': receiveId,
+          'Payment_method': paymentMethod,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        return ReturnOrder.fromJson(jsonData);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
     }
   }
+
+  static Future<BankInfomation?> fetchBankInfo() async {
+  const url = 'http://103.77.243.218/bankinformation';
+
+  try {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonData = json.decode(response.body);
+
+      return BankInfomation.fromJson(jsonData);
+    } else {
+      print('Lỗi server: ${response.statusCode}');
+      return null;
+    }
+  } catch (e) {
+    print('Lỗi khi gọi API: $e');
+    return null;
+  }
+}
 }
 
   

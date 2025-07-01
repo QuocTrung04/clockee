@@ -1,6 +1,7 @@
 import 'package:clockee/data/data.dart';
 import 'package:clockee/models/address.dart';
 import 'package:clockee/models/cart.dart';
+import 'package:clockee/models/order.dart';
 import 'package:clockee/screens/qr_pay_screen.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -139,12 +140,13 @@ class _CheckoutPageState extends State<PayScreen> {
           child: SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                ApiService.createOrder(
-                  userData.userId,
-                  selectedAddress!.receiveid!,
-                  _selectedPaymentMethod,
-                );
+              onPressed: () async {
+                ReturnOrder? returnorder = await ApiService.createOrder(
+                    userData.userId,
+                    selectedAddress!.receiveid!,
+                    _selectedPaymentMethod,
+                  );
+                Provider.of<AppData>(context).setReturnOrder(returnorder!);
                 if (_selectedPaymentMethod == 0) {
                   Navigator.push(
                     context,
