@@ -68,11 +68,21 @@ class _CheckoutPageState extends State<PayScreen> {
             // Tổng tiền
             Column(
               children: [
-                _buildPriceRow('Tạm Tính', '${formatter.format(TotalPrice(cartItem)).replaceAll(',', '.')}'),
+                _buildPriceRow(
+                  'Tạm Tính',
+                  '${formatter.format(TotalPrice(cartItem)).replaceAll(',', '.')}',
+                ),
                 SizedBox(height: 4),
-                _buildPriceRow('Phí Vận Chuyển', '${formatter.format(ShippingCost(cartItem)).replaceAll(',', '.')}'),
+                _buildPriceRow(
+                  'Phí Vận Chuyển',
+                  '${formatter.format(ShippingCost(cartItem)).replaceAll(',', '.')}',
+                ),
                 Divider(thickness: 1),
-                _buildPriceRow('Tổng', '${formatter.format(TotalPrice(cartItem)+ShippingCost(cartItem)).replaceAll(',', '.')}', bold: true),
+                _buildPriceRow(
+                  'Tổng',
+                  '${formatter.format(TotalPrice(cartItem) + ShippingCost(cartItem)).replaceAll(',', '.')}',
+                  bold: true,
+                ),
               ],
             ),
 
@@ -159,83 +169,86 @@ class _CheckoutPageState extends State<PayScreen> {
   }
 
   Widget buildProductCard(CartItem product) {
-  return Card(
-    color: Colors.white,
-    elevation: 2,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    margin: EdgeInsets.only(bottom: 8),
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(10.0, 6, 10, 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  product.imageUrl,
-                  width: 60,
-                  height: 60,
+    return Card(
+      color: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10.0, 6, 10, 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(product.imageUrl, width: 60, height: 60),
                 ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(product.name, style: TextStyle(fontSize: 17)),
-                    Row(
-                      children: [
-                        Text(product.model, style: TextStyle(color: Colors.grey)),
-                        Spacer(),
-                        Text('x${product.quantity}', style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        Text(
-                          'đ${formatter.format(product.actualPrice).replaceAll(',', '.')}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                            decoration: TextDecoration.lineThrough,
-                            decorationColor: Colors.grey,
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(product.name, style: TextStyle(fontSize: 17)),
+                      Row(
+                        children: [
+                          Text(
+                            product.model,
+                            style: TextStyle(color: Colors.grey),
                           ),
-                        ),
-                        SizedBox(width: 7),
-                        Text(
-                          'đ${formatter.format(product.price).replaceAll(',', '.')}',
-                          style: TextStyle(
-                            color: Colors.purple,
-                            fontSize: 14,
+                          Spacer(),
+                          Text(
+                            'x${product.quantity}',
+                            style: TextStyle(color: Colors.grey),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            'đ${formatter.format(product.actualPrice).replaceAll(',', '.')}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                              decoration: TextDecoration.lineThrough,
+                              decorationColor: Colors.grey,
+                            ),
+                          ),
+                          SizedBox(width: 7),
+                          Text(
+                            'đ${formatter.format(product.price).replaceAll(',', '.')}',
+                            style: TextStyle(
+                              color: Colors.purple,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text('Tổng số tiền (${product.quantity} sản phẩm): đ${formatter.format(product.price * product.quantity).replaceAll(',', '.')}'),
-            ],
-          ),
-        ],
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'Tổng số tiền (${product.quantity} sản phẩm): đ${formatter.format(product.price * product.quantity).replaceAll(',', '.')}',
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
+
   int ShippingCost(List<CartItem> products) {
     if (products.isEmpty) return 0;
 

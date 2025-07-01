@@ -100,11 +100,7 @@ class _AddressScreenState extends State<AddressScreen> {
                         ),
                       );
                       if (result == true) {
-                        // Gọi lại Provider để fetch hoặc setState để UI reload
-                        setState(
-                          () {},
-                        ); // nếu addresses là get từ Provider, chỉ cần setState
-                        // hoặc gọi lại hàm fetchAddressList nếu muốn lấy từ server mới nhất
+                        setState(() {});
                       }
                     },
                     title: Row(
