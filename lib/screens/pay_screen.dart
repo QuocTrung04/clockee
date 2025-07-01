@@ -1,6 +1,7 @@
 import 'package:clockee/data/data.dart';
 import 'package:clockee/models/address.dart';
 import 'package:clockee/models/cart.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -128,9 +129,12 @@ class _CheckoutPageState extends State<PayScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('Đã thanh toán!')));
+                ApiService.createOrder(userData.userId, selectedAddress!.receiveid!, _selectedPaymentMethod);
+                ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                SnackBar(content: Text('Đã thanh toán!')),
+              );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
@@ -143,6 +147,7 @@ class _CheckoutPageState extends State<PayScreen> {
                 'Mua ngay',
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
+              
             ),
           ),
         ),
