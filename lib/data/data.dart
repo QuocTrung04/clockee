@@ -123,8 +123,42 @@ class AppData extends ChangeNotifier {
     final success = await ApiService.addAddress(addAddress);
     if (success) {
       _addresses.add(addAddress);
+      await fetchAddressList(addAddress.userId ?? 0);
       notifyListeners();
     }
     return success;
+  }
+
+  Future<String> changePassword({
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final userId = _user?.userId;
+    if (userId == null) return 'Không tìm thấy người dùng!';
+
+    // Kiểm tra xác nhận mật khẩu mới trước khi gửi API
+    if (newPassword != confirmPassword) {
+      return 'Mật khẩu xác nhận không khớp!';
+    }
+
+    // Gọi hàm đổi mật khẩu từ ApiService
+    final result = await ApiService.changePassword(
+      userId: userId,
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    );
+
+    // Xử lý trả về theo kết quả của ApiService
+    switch (result) {
+      case 'success':
+        return 'Đổi mật khẩu thành công';
+      case 'wrong_old':
+        return 'Mật khẩu cũ không đúng';
+      case 'wrong_new':
+        return 'Không dùng lại mật khẩu cũ';
+      default:
+        return 'Đổi mật khẩu thất bại';
+    }
   }
 }
