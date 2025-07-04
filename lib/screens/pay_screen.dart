@@ -31,7 +31,7 @@ class _CheckoutPageState extends State<PayScreen> {
     Provider.of<AppData>(context).fetchAddressList(userData!.userId);
     final listAddress = Provider.of<AppData>(context).addresses;
 
-    selectedAddress = listAddress.isNotEmpty ? listAddress[3] : null;
+    selectedAddress = listAddress.isNotEmpty ? listAddress[0] : null;
 
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
@@ -146,7 +146,8 @@ class _CheckoutPageState extends State<PayScreen> {
                     selectedAddress!.receiveid!,
                     _selectedPaymentMethod,
                   );
-                Provider.of<AppData>(context).setReturnOrder(returnorder!);
+                Provider.of<AppData>(context,listen: false).removeAllCart();
+                Provider.of<AppData>(context,listen: false).setReturnOrder(returnorder);
                 if (_selectedPaymentMethod == 0) {
                   Navigator.push(
                     context,

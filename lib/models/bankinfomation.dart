@@ -1,10 +1,10 @@
 class BankInfomation {
-  final int bankId;
-  final String bankCode;
-  final String bankNumber;
-  final String secretKey;
-  final String bankName;
-  final int isUse;
+  final int? bankId;
+  final String? bankCode;
+  final String? bankNumber;
+  final String? secretKey;
+  final String? bankName;
+  final int? isUse;
 
   BankInfomation({
     required this.bankId,

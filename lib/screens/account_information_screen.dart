@@ -37,7 +37,6 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
     if (!mounted) return;
 
     if (id == null) {
-      debugPrint('User ID not found');
       return;
     }
 
@@ -48,9 +47,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
         userId = id;
         _displayName = user.name;
       });
-      debugPrint("Fetched displayName: $_displayName");
     } catch (e) {
-      debugPrint('Error fetching user: $e');
     }
   }
 

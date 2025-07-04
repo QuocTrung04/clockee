@@ -57,7 +57,6 @@ class _StateRegisterScreen extends State<RegisterScreen> {
     if (!mounted) {
       return;
     }
-    print(success);
     if (success) {
       showDialog(
         context: context,

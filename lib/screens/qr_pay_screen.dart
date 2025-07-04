@@ -1,25 +1,52 @@
+import 'package:clockee/data/data.dart';
+import 'package:clockee/models/bankinfomation.dart';
 import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:vietqr_flutter/vietqr_flutter.dart';
+import 'package:provider/provider.dart';
 
-
-
-class QRPayScreen extends StatelessWidget {
+class QRPayScreen extends StatefulWidget {
   final double amount;
 
   QRPayScreen({super.key, required this.amount});
 
+  @override
+  State<QRPayScreen> createState() => _QRPayScreenState();
+}
+
+class _QRPayScreenState extends State<QRPayScreen> {
   final formatter = NumberFormat('#,##0', 'vi_VN');
+  BankInfomation? bankinfo = null;
+  String? qrCodeUrl;
+  bool loading = true;
+  String? error;
 
   @override
-  Widget build(BuildContext context) {
-    final bankInfo = ApiService.fetchBankInfo();
-    final String dataToEncode;
-    String qrCode = VietQRGenerator.generate(
-    accountNumber: '19745371',
-    bankCode: 'ACB',
-  );
+  void initState() {
+    super.initState();
+    loadBankInfo();
+  }
+
+  Future<void> loadBankInfo() async {
+    bankinfo = await ApiService.fetchBankInfo();
+  }
+
+  @override
+  Widget build(BuildContext context) {  
+    final appdata = Provider.of<AppData>(context, listen: false);
+    // final userData = appdata.user;
+    final returnOrder = appdata.returnOrder;
+    final bankId = bankinfo?.bankCode;
+    final accountNo = bankinfo?.bankNumber;
+    final template = 'compact';
+    final amount = returnOrder?.totalPrice;
+    final addInfo = Uri.encodeComponent('THANH TOAN #${returnOrder?.orderCode ?? ''}');
+    final accountName = Uri.encodeComponent(bankinfo?.bankName ?? '');
+
+
+    // final qrUrl = 'https://img.vietqr.io/image/$bankId-$accountNo-compact.png'
+    // '?amount=$amount&addInfo=$addInfo';
+    final qrUrl = 'https://img.vietqr.io/image/970416-19745371-compact.png?amount=10000&addInfo=thanhtoan';
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFF5F5F5),
@@ -34,58 +61,55 @@ class QRPayScreen extends StatelessWidget {
           elevation: 1,
         ),
         body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'Vui lòng quét mã QR bên dưới để thanh toán:',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 30),
-
-              /// QR Code hiển thị ở đây
-              Container(
-                width: 220,
-                height: 220,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade400, width: 2),
-                ),
-                child: Center(
-                  child: generatorQR(
-                    vietQr: qrCode,
-                    image: const AssetImage('assets/images/bank.png'),
-                    sizeQr: 300,
-                    sizeEmbeddingImage: 50
-                  )
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              /// Thông tin số tiền
-              const Text(
-                'Số tiền cần thanh toán:',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '${formatter.format(amount).replaceAll(',', '.')} đ',
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
-                ),
-              ),
-              const SizedBox(height: 50),
-            ],
-          ),
+          child: loading
+              ? CircularProgressIndicator()
+              : error != null
+                  ? Text('Lỗi tải QR: $error')
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Vui lòng quét mã QR bên dưới để thanh toán:',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 30),
+                        Container(
+                          width: 220,
+                          height: 220,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.grey.shade400, width: 2),
+                          ),
+                          child: Center(
+                            child: qrUrl.isNotEmpty
+                                ? Image.network(
+                                    qrUrl,
+                                    width: 180,
+                                    height: 180,
+                                    fit: BoxFit.contain,
+                                  )
+                                : const Text('Không có mã QR'),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        const Text(
+                          'Số tiền cần thanh toán:',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '${formatter.format(widget.amount).replaceAll(',', '.')} đ',
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                        const SizedBox(height: 50),
+                      ],
+                    ),
         ),
-
-        /// Nút xác nhận
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(16),
           child: ElevatedButton.icon(

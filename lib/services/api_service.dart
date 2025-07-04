@@ -76,14 +76,11 @@ class ApiService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Đăng ký thành công: ${response.body}');
         return true;
       } else {
-        print('Đăng ký thất bại: ${response.statusCode}');
         return false;
       }
     } catch (e) {
-      print('Lỗi khi gọi API đăng ký: $e');
       return false;
     }
   }
@@ -92,12 +89,9 @@ class ApiService {
 
   static Future<List<Product>> fetchFavoriteProducts(int userId) async {
     final url = Uri.parse('http://103.77.243.218/favorite/$userId');
-    print('🔗 Đang gọi API: $url');
 
     try {
       final response = await http.get(url);
-      print('📥 Status code: ${response.statusCode}');
-      print('📦 Body: ${response.body}');
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((item) => Product.fromJson(item)).toList();
@@ -176,18 +170,12 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': userId, 'product_id': productId}),
       );
-      print("ma nguoi dung $userId, ma san pham $productId");
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('✅ Thêm yêu thích thành công');
         return true;
       } else {
-        print(
-          '❌ Lỗi thêm yêu thích: ${response.statusCode} - ${response.body}',
-        );
         return false;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi thêm yêu thích: $e');
       return false;
     }
   }
@@ -205,18 +193,12 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': userId, 'product_id': productId}),
       );
-      print("ma nguoi dung $userId, ma san pham $productId");
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('✅ Xoa yêu thích thành công');
         return true;
       } else {
-        print(
-          '❌ Lỗi thêm yêu thích: ${response.statusCode} - ${response.body}',
-        );
         return false;
       }
     } catch (e) {
-      print('❌ Lỗi kết nối khi thêm yêu thích: $e');
       return false;
     }
   }
@@ -226,11 +208,8 @@ class ApiService {
     final url = Uri.parse(
       'http://103.77.243.218/productdetail/$productId/$userId',
     );
-    print('🔗 Đang gọi API chi tiết: $url');
     try {
       final response = await http.get(url);
-      print('📥 Status code: ${response.statusCode}');
-      print('📦 Body: ${response.body}');
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         // Nếu API trả về một object
@@ -272,7 +251,6 @@ class ApiService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print('Add to cart failed: ${response.body}');
       return false;
     }
   }
@@ -288,7 +266,6 @@ class ApiService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print('Subtract from cart failed: ${response.body}');
       return false;
     }
   }
@@ -305,7 +282,6 @@ class ApiService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print('Remove from cart failed: ${response.body}');
       return false;
     }
   }
@@ -332,7 +308,6 @@ class ApiService {
       }
       return [];
     } else {
-      print('Lỗi khi lấy địa chỉ: ${response.statusCode} - ${response.body}');
       throw Exception(
         'Lỗi khi lấy địa chỉ: ${response.statusCode} - ${response.body}',
       );
@@ -352,7 +327,6 @@ class ApiService {
       // Thêm thành công
       return true;
     } else {
-      print('Lỗi khi thêm địa chỉ: ${response.statusCode} - ${response.body}');
       return false;
     }
   }
@@ -368,9 +342,6 @@ class ApiService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print(
-        'Lỗi khi cập nhật địa chỉ: ${response.statusCode} - ${response.body}',
-      );
       return false;
     }
   }
@@ -390,7 +361,28 @@ class ApiService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
+        print("Thêm order thành công!");
         return ReturnOrder.fromJson(jsonData);
+      } else {
+        print("Thêm order thất bại");
+        return null;
+      }
+    } catch (e) {
+      print("Thêm order thất bại${e}}");
+      return null;
+    }
+  }
+
+  static Future<BankInfomation?> fetchBankInfo() async {
+    const url = 'http://103.77.243.218/bankinformation';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+
+        return BankInfomation.fromJson(jsonData);
       } else {
         return null;
       }
@@ -399,25 +391,44 @@ class ApiService {
     }
   }
 
-  static Future<BankInfomation?> fetchBankInfo() async {
-  const url = 'http://103.77.243.218/bankinformation';
+  static Future<String> generateVietQR({
+    required String accountNo,
+    required String accountName,
+    required int acqId,
+    required int amount,
+    required String addInfo,
+    required String clientId,
+    required String apiKey,
+  }) async {
+    final url = Uri.parse('https://api.vietqr.io/v2/generate');
+    final headers = {
+      'x-client-id': clientId,
+      'x-api-key': apiKey,
+      'Content-Type': 'application/json',
+    };
+    final body = json.encode({
+      'accountNo': accountNo,
+      'accountName': accountName,
+      'acqId': acqId,
+      'amount': amount,
+      'addInfo': addInfo,
+      'format': 'image',
+      'template': 'compact',
+    });
 
-  try {
-    final response = await http.get(Uri.parse(url));
+    final response = await http.post(url, headers: headers, body: body);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonData = json.decode(response.body);
-
-      return BankInfomation.fromJson(jsonData);
+      final data = json.decode(response.body);
+      if (data['code'] == '00') {
+        return data['data']['qrDataURL'];
+      } else {
+        throw Exception('Error: ${data['desc']}');
+      }
     } else {
-      print('Lỗi server: ${response.statusCode}');
-      return null;
+      throw Exception('Failed to generate QR code');
     }
-  } catch (e) {
-    print('Lỗi khi gọi API: $e');
-    return null;
   }
-}
 }
 
   

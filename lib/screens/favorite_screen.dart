@@ -33,7 +33,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   Future<List<Product>> fetchFavoriteProducts() async {
     if (userId == null) return [];
     final list = await ApiService.fetchFavoriteProducts(userId!);
-    print('Danh sách nhận được: ${list.map((e) => e.productId).toList()}');
     return list;
   }
 
@@ -140,9 +139,6 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                           widget.sanPham.favorite = 0;
                         });
                         favoriteChangedNotifier.value++;
-                        print(
-                          'notifier hashCode: ${favoriteChangedNotifier.hashCode}',
-                        );
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Đã xóa khỏi yêu thích'),

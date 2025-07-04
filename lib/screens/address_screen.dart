@@ -91,7 +91,6 @@ class _AddressScreenState extends State<AddressScreen> {
                   final item = addressList[index];
                   return ListTile(
                     onTap: () async {
-                      print('ai di dia chi ne ${item.receiveid}');
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(

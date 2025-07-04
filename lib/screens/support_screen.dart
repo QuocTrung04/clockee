@@ -12,8 +12,6 @@ class SupportScreen extends StatelessWidget {
     final Uri uri = isPhone ? Uri(scheme: 'tel', path: url) : Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.platformDefault);
-    } else {
-      debugPrint('Không thể mở liên kết: $url');
     }
   }
 

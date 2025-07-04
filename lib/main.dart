@@ -5,21 +5,6 @@ import 'package:provider/provider.dart';
 
 final RouteObserver<ModalRoute<void>> routeObserver =
     RouteObserver<ModalRoute<void>>();
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-
-//   final appData = AppData();
-//   await appData.loadUserFromLocal();
-//   await appData.loadCart();
-
-//   runApp(
-//     ChangeNotifierProvider(
-//       create: (context) => AppData(),
-//       child: MyApp(),
-//     ),
-//   );
-// }
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

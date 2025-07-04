@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:clockee/data/user_prefs.dart';
 import 'package:clockee/models/address.dart';
 import 'package:clockee/models/order.dart';
+import 'package:clockee/models/sanpham.dart';
 import 'package:clockee/models/user.dart';
 import 'package:clockee/models/cart.dart';
 import 'package:clockee/services/api_service.dart';
@@ -36,7 +37,7 @@ class AppData extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setReturnOrder(ReturnOrder returnOrder) {
+  void setReturnOrder(ReturnOrder? returnOrder) {
     _returnOrder = returnOrder;
     notifyListeners();
   }
@@ -48,6 +49,11 @@ class AppData extends ChangeNotifier {
 
   void removeFromCart(int index) {
     _cartItems.removeAt(index);
+    notifyListeners();
+  }
+
+  void removeAllCart() {
+    cartItems.clear();
     notifyListeners();
   }
 

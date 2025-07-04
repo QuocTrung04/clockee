@@ -49,8 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
         });
         _initCart();
         loadProducts();
-      } else {
-        print('User chưa đăng nhập hoặc chưa load xong');
       }
     });
   }
@@ -68,10 +66,8 @@ class _HomeScreenState extends State<HomeScreen> {
           cartItems = fetchedItems;
         });
       } catch (e) {
-        print('Lỗi khi tải giỏ hàng: $e');
       }
     } else {
-      print('User chưa đăng nhập hoặc userId bị null');
     }
   }
 
@@ -83,18 +79,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     try {
       final products = await ApiService.fetchProducts(userid);
-      print('ĐÂY LÀ ID 🫵: $userid');
-      print('Sản phẩm từ API: ${products.length}');
-      for (var p in products) {
-        print('${p.name} - ${p.sex}');
-      }
 
       setState(() {
         allProducts = products;
         isLoading = false;
       });
     } catch (e) {
-      print('Lỗi tải sản phẩm: $e');
     }
   }
 
@@ -609,7 +599,6 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                   const SnackBar(content: Text('Đã thêm sản phẩm vào giỏ')),
                 );
                 favoriteChangedNotifier.value++;
-                print("Đã thêm sản phẩm vào giỏ");
                 final cart = CartItem(
                   productId: widget.sanPham.productId,
                   imageUrl: widget.sanPham.imageUrl.toString(),
