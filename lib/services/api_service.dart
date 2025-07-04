@@ -345,7 +345,12 @@ class ApiService {
       return false;
     }
   }
- static Future<ReturnOrder?> createOrder(int userId, int receiveId, int paymentMethod) async {
+
+  static Future<ReturnOrder?> createOrder(
+    int userId,
+    int receiveId,
+    int paymentMethod,
+  ) async {
     final url = Uri.parse('http://103.77.243.218/api/createorder');
 
     try {
@@ -382,14 +387,14 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
 
-        return BankInfomation.fromJson(jsonData);
-      } else {
-        return null;
+          return BankInfomation.fromJson(jsonData);
+        } else {
+            return null;
+        }
+      } catch (e) {
+          return null;
       }
-    } catch (e) {
-      return null;
     }
-  }
 
   static Future<String> generateVietQR({
     required String accountNo,
@@ -429,6 +434,37 @@ class ApiService {
       throw Exception('Failed to generate QR code');
     }
   }
-}
 
-  
+  static Future<String> changePassword({
+    required int userId,
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    final url = Uri.parse('http://103.77.243.218/api/changepassword');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'User_id': userId,
+        'old_password': oldPassword,
+        'new_password': newPassword,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      print(body);
+      if (body is Map && body['message'] == 'Mật khẩu cũ không đúng') {
+        return 'wrong_old';
+      }
+      if (body is Map && body['message'] == 'Đổi mật khẩu thành công') {
+        return 'success';
+      }
+      if (body is Map && body['message'] == 'Không dùng lại mật khẩu cũ') {
+        return 'wrong_new';
+      }
+      return 'error';
+    } else {
+      return 'error';
+    }
+  }
+}

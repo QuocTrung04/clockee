@@ -35,6 +35,7 @@ class _AddAdressScreenState extends State<AddAdressScreen> {
       district: _districtController.text,
       street: _streetController.text,
       addressDetail: _detailController.text,
+      isDefault: _isDefault,
     );
     final result = await Provider.of<AppData>(
       context,
