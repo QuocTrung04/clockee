@@ -50,8 +50,8 @@ class _CheckoutPageState extends State<PayScreen> {
             // Địa chỉ
             DropdownButton<Address>(
               isExpanded: true,
-
               value: selectedAddress,
+              hint: Text('Chọn địa chỉ'),
               items: listAddress.map((address) {
                 return DropdownMenuItem<Address>(
                   value: address,
@@ -142,12 +142,15 @@ class _CheckoutPageState extends State<PayScreen> {
             child: ElevatedButton(
               onPressed: () async {
                 ReturnOrder? returnorder = await ApiService.createOrder(
-                    userData.userId,
-                    selectedAddress!.receiveid!,
-                    _selectedPaymentMethod,
-                  );
-                Provider.of<AppData>(context,listen: false).removeAllCart();
-                Provider.of<AppData>(context,listen: false).setReturnOrder(returnorder);
+                  userData.userId,
+                  selectedAddress!.receiveid!,
+                  _selectedPaymentMethod,
+                );
+                Provider.of<AppData>(context, listen: false).removeAllCart();
+                Provider.of<AppData>(
+                  context,
+                  listen: false,
+                ).setReturnOrder(returnorder);
                 if (_selectedPaymentMethod == 0) {
                   Navigator.push(
                     context,

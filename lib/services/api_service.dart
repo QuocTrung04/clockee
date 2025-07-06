@@ -512,4 +512,23 @@ class ApiService {
       return false;
     }
   }
+
+  static Future<List<String>> fetchBannerImages() async {
+    final response = await http.get(
+      Uri.parse('http://103.77.243.218/productnews'),
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = json.decode(response.body);
+
+      // Lấy trường Image_url trong từng phần tử
+      List<String> images = jsonData
+          .map((item) => item['Image_url'] as String)
+          .toList();
+
+      return images;
+    } else {
+      throw Exception('Failed to load banner images');
+    }
+  }
 }
