@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:clockee/models/cart.dart';
 import 'package:clockee/data/favorite_notifier.dart';
 import 'package:clockee/screens/cart_item_screen.dart';
@@ -12,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/data.dart';
 import '../models/sanpham.dart';
 import '../models/user.dart';
+import '../screens/banner.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -97,20 +100,64 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Nội dung chính ở đây
-          SizedBox(
-            width: double.infinity,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Image.asset(
-                    'assets/images/dongho.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.only(top: 5, bottom: 5),
+            child: SizedBox(
+              width: double.infinity,
+              height: 220,
+              child: FutureBuilder<List<String>>(
+                future:
+                    ApiService.fetchBannerImages(), // Hàm gọi API lấy list ảnh
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Lỗi tải banner'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    // Nếu không có ảnh, bạn có thể hiện ảnh mặc định
+                    return Image.asset(
+                      'assets/images/dongho.png',
+                      fit: BoxFit.cover,
+                    );
+                  }
+                  final images = snapshot.data!;
+                  return CarouselSlider(
+                    items: images.map((url) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          url,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      );
+                    }).toList(),
+                    options: CarouselOptions(
+                      height: 220,
+                      autoPlay: true,
+                      autoPlayInterval: Duration(seconds: 3),
+                      enlargeCenterPage: true,
+                      viewportFraction: 1,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(left: 15),
+            child: Container(
+              width: 210,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Color(0xFF662D91), width: 2),
+                ),
+              ),
+              child: Text('SẢN PHẨM BÁN CHẠY', style: TextStyle(fontSize: 20)),
+            ),
+          ),
+          SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.only(top: 5),
             child: SizedBox(
@@ -163,19 +210,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Container(
-              width: 168,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: Color(0xFF662D91), width: 2),
-                ),
-              ),
-              child: Text('SẢN PHẨM BÁN CHẠY'),
-            ),
-          ),
+          SizedBox(height: 10),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: GenderStatusButtons(gioitinhNotifier: gioitinhNotifier),

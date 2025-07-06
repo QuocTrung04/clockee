@@ -1,8 +1,11 @@
+import 'package:clockee/data/data.dart';
 import 'package:clockee/data/favorite_notifier.dart';
+import 'package:clockee/models/cart.dart';
 import 'package:clockee/models/sanpham.dart';
 import 'package:clockee/screens/pay_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:clockee/services/api_service.dart';
 
@@ -97,6 +100,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final CartItems = Provider.of<AppData>(context).cartItems;
+    final UserData = Provider.of<AppData>(context).user;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -144,7 +149,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       // Nút yêu thích
                       Positioned(
                         top: 16,
-                        right: 60,
+                        right: 10,
                         child: GestureDetector(
                           onTap: () => _toggleFavorite(product),
                           child: AnimatedContainer(
@@ -179,21 +184,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 color: const Color(0xFF662D91),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                      // Nút giỏ hàng
-                      Positioned(
-                        top: 16,
-                        right: 16,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white70,
-                          child: IconButton(
-                            icon: IconifyIcon(
-                              icon: 'solar:cart-bold',
-                              color: Color(0xFF662D91),
-                            ),
-                            onPressed: () {},
                           ),
                         ),
                       ),
@@ -319,7 +309,44 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () async {
+              try {
+                // Lấy product từ FutureBuilder hoặc lưu biến product trong State nếu có
+                final product = await _productFuture;
+
+                // Gọi API thêm giỏ hàng
+                await ApiService.addToCart(widget.userId, product.productId);
+
+                // Thông báo thành công
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Đã thêm sản phẩm vào giỏ')),
+                );
+
+                // Tạo CartItem và thêm vào Provider
+                final cartItem = CartItem(
+                  productId: product.productId,
+                  imageUrl: product.imageUrl ?? '',
+                  name: product.name ?? '',
+                  actualPrice: product.actualPrice ?? 0,
+                  price: product.sellPrice ?? 0,
+                  model: product.watchModel ?? '',
+                  quantity: 1,
+                );
+                Provider.of<AppData>(
+                  context,
+                  listen: false,
+                ).addToCart(cartItem);
+
+                // Cập nhật notifier (nếu có)
+                favoriteChangedNotifier.value++;
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Lỗi khi thêm sản phẩm: $e')),
+                );
+              }
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,
               padding: EdgeInsets.symmetric(vertical: 14),

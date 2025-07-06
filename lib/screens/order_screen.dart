@@ -366,45 +366,6 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
-  // Widget _buildTabBar() {
-  //   return Container(
-  //     color: Colors.grey[300],
-  //     padding: const EdgeInsets.symmetric(vertical: 8),
-  //     child: SingleChildScrollView(
-  //       scrollDirection: Axis.horizontal,
-  //       physics: BouncingScrollPhysics(),
-  //       child: Row(
-  //         children: List.generate(_tabs.length, (index) {
-  //           final isSelected = _selectedTab == index;
-  //           return GestureDetector(
-  //             onTap: () => _onTabChanged(index),
-  //             child: Container(
-  //               margin: const EdgeInsets.symmetric(horizontal: 12),
-  //               padding: const EdgeInsets.symmetric(
-  //                 vertical: 8,
-  //                 horizontal: 20,
-  //               ),
-  //               decoration: BoxDecoration(
-  //                 color: isSelected ? Colors.white : Colors.grey[300],
-  //                 borderRadius: BorderRadius.circular(10),
-  //               ),
-  //               child: Text(
-  //                 _tabs[index],
-  //                 style: TextStyle(
-  //                   fontWeight: isSelected
-  //                       ? FontWeight.bold
-  //                       : FontWeight.normal,
-  //                   color: isSelected ? Colors.deepPurple : Colors.black,
-  //                   fontSize: 15,
-  //                 ),
-  //               ),
-  //             ),
-  //           );
-  //         }),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildTabBar() {
     return Container(
       color: Colors.grey[200], // nền tổng thể
