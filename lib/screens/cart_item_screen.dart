@@ -90,8 +90,10 @@ class _CartItemScreenState extends State<CartItemScreen>
                             Spacer(),
                             IconButton(
                               onPressed: _closeSlideCart,
-                              icon: IconifyIcon(
-                                icon: 'material-symbols-light:close-rounded',
+                              icon: Image.asset(
+                                'assets/images/close.png',
+                                width: 20,
+                                height: 20,
                               ),
                             ),
                             SizedBox(height: 20),
@@ -382,21 +384,30 @@ class CartItemWidget extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: onDecrease,
-                      icon: IconifyIcon(icon: 'gala:remove'),
+                      icon: Image.asset(
+                                'assets/images/minus.png',
+                                width: 24,
+                                height: 24,
+                              ),
                     ),
                     Text(' ${item.quantity}'),
                     IconButton(
                       onPressed: onIncrease,
-                      icon: IconifyIcon(icon: 'gala:add'),
+                      icon: Image.asset(
+                                'assets/images/plus.png',
+                                width: 21.5,
+                                height: 21.5,
+                              ),
                     ),
 
                     Spacer(),
                     IconButton(
                       onPressed: onDelete,
-                      icon: IconifyIcon(
-                        icon: 'mdi-light:delete',
-                        color: Colors.red,
-                      ),
+                      icon: Image.asset(
+                                'assets/images/delete.png',
+                                width: 20,
+                                height: 20,
+                              ),
                     ),
                   ],
                 ),
