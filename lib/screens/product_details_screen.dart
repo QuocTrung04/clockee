@@ -8,6 +8,7 @@ import 'package:iconify_design/iconify_design.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:clockee/services/api_service.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final int productId;
@@ -25,6 +26,7 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<Product> _productFuture;
+  late Future<List<String>> productImage;
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       widget.productId,
       widget.userId,
     );
+    productImage = ApiService.fetchProductImage(widget.productId);
   }
 
   void _reloadProduct() {
@@ -125,13 +128,52 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 children: [
                   Stack(
                     children: [
-                      // Ảnh sản phẩm
+                      //  Ảnh sản phẩm
                       Image.network(
                         product.imageUrl!,
                         width: double.infinity,
                         height: 300,
                         fit: BoxFit.contain,
                       ),
+                      FutureBuilder<List<String>>(
+                        future: productImage,
+                        builder: (context, imageSnapshot) {
+                          if (imageSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return SizedBox(
+                              height: 100,
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          } else if (imageSnapshot.hasError) {
+                            return Text('Lỗi tải ảnh: ${imageSnapshot.error}');
+                          } else if (!imageSnapshot.hasData ||
+                              imageSnapshot.data!.isEmpty) {
+                            return SizedBox.shrink(); // Không hiển thị gì nếu không có ảnh
+                          }
+
+                          final images = imageSnapshot.data!;
+                          return SizedBox(
+                            height: 100,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: images.length,
+                              itemBuilder: (context, index) {
+                                final imageUrl =
+                                    'http://103.77.243.218/productimages/${widget.productId}/${images[index]}';
+                                return Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Image.network(
+                                    imageUrl,
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+
                       // Nút quay lại
                       Positioned(
                         top: 16,

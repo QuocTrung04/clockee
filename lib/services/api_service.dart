@@ -531,4 +531,17 @@ class ApiService {
       throw Exception('Failed to load banner images');
     }
   }
+
+  static Future<List<String>> fetchProductImage(int productId) async {
+    final url = Uri.parse('http://103.77.243.218/productimages/$productId');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      List<String> images = List<String>.from(data['images']);
+      return images;
+    } else {
+      print('loi tai hinh anh ${response.statusCode}');
+      throw Exception(' loi tai hinh anh');
+    }
+  }
 }
