@@ -46,7 +46,7 @@ class ApiService {
         await prefs.setString('username', data['Username']);
         await prefs.setInt('userid', data['User_id']);
 
-        return User.fromJson(data); // 👈 trả về user để gán ngoài
+        return User.fromJson(data);
       }
     }
 
@@ -76,11 +76,14 @@ class ApiService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Đăng ký thành công: ${response.body}');
         return true;
       } else {
+        print('Đăng ký thất bại: ${response.statusCode}');
         return false;
       }
     } catch (e) {
+      print('Lỗi khi gọi API đăng ký: $e');
       return false;
     }
   }
@@ -89,9 +92,12 @@ class ApiService {
 
   static Future<List<Product>> fetchFavoriteProducts(int userId) async {
     final url = Uri.parse('http://103.77.243.218/favorite/$userId');
+    print('🔗 Đang gọi API: $url');
 
     try {
       final response = await http.get(url);
+      print('📥 Status code: ${response.statusCode}');
+      print('📦 Body: ${response.body}');
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((item) => Product.fromJson(item)).toList();
@@ -170,12 +176,18 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': userId, 'product_id': productId}),
       );
+      print("ma nguoi dung $userId, ma san pham $productId");
       if (response.statusCode == 200 || response.statusCode == 201) {
+        print('✅ Thêm yêu thích thành công');
         return true;
       } else {
+        print(
+          '❌ Lỗi thêm yêu thích: ${response.statusCode} - ${response.body}',
+        );
         return false;
       }
     } catch (e) {
+      print('❌ Lỗi kết nối khi thêm yêu thích: $e');
       return false;
     }
   }
@@ -193,12 +205,18 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': userId, 'product_id': productId}),
       );
+      print("ma nguoi dung $userId, ma san pham $productId");
       if (response.statusCode == 200 || response.statusCode == 201) {
+        print('✅ Xoa yêu thích thành công');
         return true;
       } else {
+        print(
+          '❌ Lỗi thêm yêu thích: ${response.statusCode} - ${response.body}',
+        );
         return false;
       }
     } catch (e) {
+      print('❌ Lỗi kết nối khi thêm yêu thích: $e');
       return false;
     }
   }
@@ -208,8 +226,11 @@ class ApiService {
     final url = Uri.parse(
       'http://103.77.243.218/productdetail/$productId/$userId',
     );
+    print('🔗 Đang gọi API chi tiết: $url');
     try {
       final response = await http.get(url);
+      print('📥 Status code: ${response.statusCode}');
+      print('📦 Body: ${response.body}');
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         // Nếu API trả về một object
@@ -251,6 +272,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return true;
     } else {
+      print('Add to cart failed: ${response.body}');
       return false;
     }
   }
@@ -266,6 +288,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return true;
     } else {
+      print('Subtract from cart failed: ${response.body}');
       return false;
     }
   }
@@ -282,6 +305,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return true;
     } else {
+      print('Remove from cart failed: ${response.body}');
       return false;
     }
   }
@@ -308,6 +332,7 @@ class ApiService {
       }
       return [];
     } else {
+      print('Lỗi khi lấy địa chỉ: ${response.statusCode} - ${response.body}');
       throw Exception(
         'Lỗi khi lấy địa chỉ: ${response.statusCode} - ${response.body}',
       );
@@ -327,6 +352,7 @@ class ApiService {
       // Thêm thành công
       return true;
     } else {
+      print('Lỗi khi thêm địa chỉ: ${response.statusCode} - ${response.body}');
       return false;
     }
   }
@@ -342,6 +368,9 @@ class ApiService {
     if (response.statusCode == 200) {
       return true;
     } else {
+      print(
+        'Lỗi khi cập nhật địa chỉ: ${response.statusCode} - ${response.body}',
+      );
       return false;
     }
   }
@@ -387,14 +416,16 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
 
-          return BankInfomation.fromJson(jsonData);
-        } else {
-            return null;
-        }
-      } catch (e) {
-          return null;
+        return BankInfomation.fromJson(jsonData);
+      } else {
+        print('Lỗi server: ${response.statusCode}');
+        return null;
       }
+    } catch (e) {
+      print('Lỗi khi gọi API: $e');
+      return null;
     }
+  }
 
   static Future<String> generateVietQR({
     required String accountNo,
@@ -465,6 +496,20 @@ class ApiService {
       return 'error';
     } else {
       return 'error';
+    }
+  }
+
+  //API xóa ĐỊA CHỈ
+  static Future<bool> deleteAddress(int addressId) async {
+    final url = Uri.parse(
+      'http://103.77.243.218/api/receiveaddress/$addressId',
+    );
+    final response = await http.delete(url);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('xoa dia chi that bai ${response.statusCode}');
+      return false;
     }
   }
 }

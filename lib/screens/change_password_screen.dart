@@ -1,4 +1,5 @@
 import 'package:clockee/data/data.dart';
+import 'package:clockee/screens/confirm_email.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:iconify_design/iconify_design.dart';
@@ -26,8 +27,6 @@ class _StateLoginScreen extends State<ChangePasswordScreen> {
           newPassword: _newPasswordController.text,
           confirmPassword: _confirmPasswordController.text,
         );
-    print('oldpassword ${_oldPasswordController.text}');
-    print('newpassword ${_newPasswordController.text}');
     if (!mounted) return;
     final isSuccess = result == 'Đổi mật khẩu thành công';
     ScaffoldMessenger.of(context).showSnackBar(
@@ -239,7 +238,14 @@ class _StateLoginScreen extends State<ChangePasswordScreen> {
                               ),
                               SizedBox(height: 40),
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ConfirmEmail(),
+                                    ),
+                                  );
+                                },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border(

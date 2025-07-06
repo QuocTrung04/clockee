@@ -50,6 +50,51 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
     super.dispose();
   }
 
+  void deleteAddress(int addressId) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text('Xác nhận'),
+        content: Text('Bạn có chắc chắn muốn xóa địa chỉ này không?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Hủy'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Xóa', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      if (!mounted) return;
+      final success = await Provider.of<AppData>(
+        context,
+        listen: false,
+      ).deleteAddress(addressId);
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Xóa địa chỉ thành công!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Xóa địa chỉ thất bại!'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final border = OutlineInputBorder(
@@ -181,7 +226,9 @@ class _EditAdressScreenState extends State<EditAdressScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    deleteAddress(widget.address.receiveid!);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     elevation: 2,

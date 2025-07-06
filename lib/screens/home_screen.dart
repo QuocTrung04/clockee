@@ -65,10 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           cartItems = fetchedItems;
         });
-      } catch (e) {
-      }
-    } else {
-    }
+      } catch (e) {}
+    } else {}
   }
 
   void loadProducts() async {
@@ -84,8 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
         allProducts = products;
         isLoading = false;
       });
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   @override
@@ -215,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     crossAxisCount: 2,
                                     crossAxisSpacing: 3,
                                     mainAxisSpacing: 5,
-                                    childAspectRatio: 0.52,
+                                    childAspectRatio: 0.51,
                                   ),
                               itemBuilder: (context, index) {
                                 return SanPhamWidget(
@@ -449,10 +446,10 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             ScaffoldMessenger.of(context)
                               ..hideCurrentSnackBar()
                               ..showSnackBar(
-                              const SnackBar(
-                                content: Text('Đã xóa khỏi yêu thích'),
-                              ),
-                            );
+                                const SnackBar(
+                                  content: Text('Đã xóa khỏi yêu thích'),
+                                ),
+                              );
                             favoriteChangedNotifier.value++;
                           }
                         } else {
@@ -468,10 +465,10 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             ScaffoldMessenger.of(context)
                               ..hideCurrentSnackBar()
                               ..showSnackBar(
-                              const SnackBar(
-                                content: Text('Đã thêm vào yêu thích'),
-                              ),
-                            );
+                                const SnackBar(
+                                  content: Text('Đã thêm vào yêu thích'),
+                                ),
+                              );
                             favoriteChangedNotifier.value++;
                           }
                         }
@@ -481,9 +478,9 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
                               const SnackBar(
-                              content: Text('Không thể cập nhật yêu thích'),
-                            ),
-                          );
+                                content: Text('Không thể cập nhật yêu thích'),
+                              ),
+                            );
                           favoriteChangedNotifier.value++;
                         }
                       },

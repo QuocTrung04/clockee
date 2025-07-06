@@ -75,7 +75,7 @@ class AppData extends ChangeNotifier {
 
   Future<void> loadCart() async {
     if (_user != null) {
-      final listCart = await ApiService.fetchCartItem(_user!.userId!);
+      final listCart = await ApiService.fetchCartItem(_user!.userId);
       setCart(listCart);
       notifyListeners();
     }
@@ -94,6 +94,15 @@ class AppData extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> deleteAddress(int addressId) async {
+    final success = await ApiService.deleteAddress(addressId);
+    if (success) {
+      _addresses.removeWhere((item) => item.receiveid! == addressId);
+      notifyListeners();
+    }
+    return success;
+  }
+
   Future<bool> updateAddress(Address updatedAddress) async {
     final success = await ApiService.editAddress(
       updatedAddress.receiveid!,
@@ -101,7 +110,6 @@ class AppData extends ChangeNotifier {
     );
 
     if (success) {
-      // Nếu update thành mặc định thì set các địa chỉ khác về không mặc định
       if (updatedAddress.isDefault) {
         _addresses = _addresses.map((a) {
           if (a.receiveid == updatedAddress.receiveid) {

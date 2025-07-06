@@ -319,12 +319,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PayScreen()),
-              );
-            },
+            onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,
               padding: EdgeInsets.symmetric(vertical: 14),

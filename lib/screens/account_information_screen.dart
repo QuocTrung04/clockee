@@ -47,8 +47,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
         userId = id;
         _displayName = user.name;
       });
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   @override
@@ -176,6 +175,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                       final shouldLogout = await showDialog<bool>(
                         context: context,
                         builder: (context) => AlertDialog(
+                          backgroundColor: Colors.white,
                           title: Text('Xác nhận đăng xuất'),
                           content: Text(
                             'Bạn có chắc chắn muốn đăng xuất không?',
