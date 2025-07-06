@@ -19,5 +19,14 @@ class OrderItem{
       'Total_price':totalPrice
     };
   }
+
+  factory OrderItem.fromJson(Map<String, dynamic> json) {
+    return OrderItem(
+      productId: json['Product_id'],
+      orderId: json['Order_id'],
+      quantity: json['Quantity'],
+      totalPrice: json['Total_price'],
+    );
+  }
 }
 

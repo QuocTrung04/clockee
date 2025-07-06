@@ -29,18 +29,25 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   void _onReset() async {
     if (_formKey.currentState!.validate()) {
       final newPassword = _passwordController.text.trim();
+      if(newPassword.length < 6){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Mật khẩu phải lớn hơn 6 kí tự')),
+        );
+        return;
+      }
       int APIresponse = await ApiService.fogotPassword(userId: widget.userId, newPassword: newPassword);
-      print("11123 $APIresponse");
       // Xử lý đặt lại mật khẩu ở đây
       if(!mounted) return;
       if(APIresponse == 200){
         Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => CustomMainScreen()),(Route<dynamic> route) => false);
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Mật khẩu phải lớn hơn 6 kí tự')),
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Đặt mật khẩu mới thất bại!')),
         );
         return;
+      }
       
     }
   }

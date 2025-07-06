@@ -141,12 +141,11 @@ class _CartItemScreenState extends State<CartItemScreen>
                                     },
                                     onDelete: () {
                                       setState(() {
-                                        appdata.removeAllCart();
+                                        appdata.removeFromCart(index);
                                         ApiService.removeFromCart(
                                           UserData!.userId,
                                           item.productId,
                                         );
-                                        favoriteChangedNotifier.value++;
                                       });
                                     },
                                   );

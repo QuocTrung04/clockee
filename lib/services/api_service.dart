@@ -599,4 +599,23 @@ class ApiService {
       return null;
     }
   }
+
+  Future<List<Order>> fetchOrders(int userId) async {
+    final url = Uri.parse('http://103.77.243.218/orders/$userId');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+
+      // jsonData là List<dynamic> rồi, không cần lấy thêm key nào
+      final List<dynamic> ordersJson = jsonData;
+
+      List<Order> orders = ordersJson.map((json) => Order.fromJson(json)).toList();
+
+      return orders;
+    } else {
+      throw Exception('Failed to load orders');
+    }
+  }
 }

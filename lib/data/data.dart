@@ -64,7 +64,7 @@ class AppData extends ChangeNotifier {
   }
 
   void removeAllCart() {
-    _cartItems.clear();
+    _cartItems.clear();  
     notifyListeners();
   }
 
