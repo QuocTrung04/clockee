@@ -28,6 +28,7 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<Product> _productFuture;
   late Future<List<ProductImage>> productImage;
+  int _currentImage = 0;
 
   @override
   void initState() {
@@ -104,8 +105,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final CartItems = Provider.of<AppData>(context).cartItems;
-    final UserData = Provider.of<AppData>(context).user;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -129,46 +128,81 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 children: [
                   Stack(
                     children: [
-                      //  Ảnh sản phẩm
-                      Image.network(
-                        product.imageUrl!,
-                        width: double.infinity,
-                        height: 300,
-                        fit: BoxFit.contain,
-                      ),
                       FutureBuilder<List<ProductImage>>(
                         future: productImage,
-                        builder: (context, imageSnapshot) {
-                          if (imageSnapshot.connectionState ==
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return SizedBox(
-                              height: 100,
-                              child: Center(child: CircularProgressIndicator()),
+                            return const Center(
+                              child: CircularProgressIndicator(),
                             );
-                          } else if (imageSnapshot.hasError) {
-                            return Text('Lỗi tải ảnh: ${imageSnapshot.error}');
-                          } else if (!imageSnapshot.hasData ||
-                              imageSnapshot.data!.isEmpty) {
-                            return SizedBox.shrink(); 
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child: Text('Lỗi tải ảnh: ${snapshot.error}'),
+                            );
+                          } else if (!snapshot.hasData) {
+                            return const SizedBox();
                           }
 
-                          final images = imageSnapshot.data!;
-                          return SizedBox(
-                            height: 100,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: images.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Image.network(
-                                    images[index].imageUrl!,
-                                    width: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                );
-                              },
+                          final images = snapshot.data!;
+
+                          // Thêm ảnh chính vào đầu danh sách
+                          final allImages = [
+                            ProductImage(
+                              imageId: 0,
+                              productId: widget.productId,
+                              imageUrl: product.imageUrl ?? '',
                             ),
+                            ...images,
+                          ];
+
+                          return Column(
+                            children: [
+                              CarouselSlider(
+                                options: CarouselOptions(
+                                  height: 300,
+                                  enlargeCenterPage: true,
+                                  autoPlay: allImages.length > 1,
+                                  enableInfiniteScroll: allImages.length > 1,
+                                  onPageChanged: (index, reason) => {
+                                    setState(() {
+                                      _currentImage = index;
+                                    }),
+                                  },
+                                ),
+                                items: allImages.map((img) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      img.imageUrl,
+                                      fit: BoxFit.contain,
+                                      width: double.infinity,
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(allImages.length, (
+                                  index,
+                                ) {
+                                  return Container(
+                                    width: 8,
+                                    height: 8,
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _currentImage == index
+                                          ? Colors.purple
+                                          : Colors.grey.shade300,
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ],
                           );
                         },
                       ),
