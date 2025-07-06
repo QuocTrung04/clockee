@@ -1,7 +1,11 @@
+import 'package:clockee/screens/home_screen.dart';
+import 'package:clockee/services/api_service.dart';
+import 'package:clockee/widgets/custom_main_Screen.dart';
 import 'package:flutter/material.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+  final userId;
+  const ResetPasswordScreen({super.key, required this.userId});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -22,14 +26,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     super.dispose();
   }
 
-  void _onReset() {
+  void _onReset() async {
     if (_formKey.currentState!.validate()) {
       final newPassword = _passwordController.text.trim();
+      int APIresponse = await ApiService.fogotPassword(userId: widget.userId, newPassword: newPassword);
+      print("11123 $APIresponse");
       // Xử lý đặt lại mật khẩu ở đây
+      if(!mounted) return;
+      if(APIresponse == 200){
+        Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => CustomMainScreen()),(Route<dynamic> route) => false);
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Mật khẩu đã được đặt lại thành công!')),
-      );
-      Navigator.pop(context);
+          SnackBar(content: Text('Mật khẩu phải lớn hơn 6 kí tự')),
+        );
+        return;
+      
     }
   }
 

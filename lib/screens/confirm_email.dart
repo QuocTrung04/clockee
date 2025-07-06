@@ -1,4 +1,5 @@
 import 'package:clockee/screens/otp_screen.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
 
@@ -19,16 +20,26 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
     super.dispose();
   }
 
-  void _onConfirm() {
+  void _onConfirm() async {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text.trim();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => OtpScreen()),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Xác nhận email đã được gửi tới $email')),
-      );
+      int responsecode = await ApiService.sendOtp(email);
+      if(responsecode == 200){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OtpScreen(email: email,)),
+        );
+      }
+      else if(responsecode == 404){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Email không tồn tại trong hệ thống')),
+        );
+      }
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Không thể gửi mã OTP tới $email')),
+        );
+      }
     }
   }
 
