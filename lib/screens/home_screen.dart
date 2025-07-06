@@ -624,12 +624,17 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                     ],
                   ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 ApiService.addToCart(
                   UserData!.userId,
                   widget.sanPham.productId,
                 );
-                ScaffoldMessenger.of(context).showSnackBar(
+                
+                final messenger = ScaffoldMessenger.of(context);
+
+                messenger.hideCurrentSnackBar(reason: SnackBarClosedReason.remove);
+
+                messenger.showSnackBar(
                   const SnackBar(content: Text('Đã thêm sản phẩm vào giỏ')),
                 );
                 favoriteChangedNotifier.value++;

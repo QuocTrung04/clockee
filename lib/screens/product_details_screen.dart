@@ -40,15 +40,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     productImage = ApiService.fetchProductImages(widget.productId);
   }
 
-  void _reloadProduct() {
-    setState(() {
-      _productFuture = ApiService.fetchProductDetail(
-        widget.productId,
-        widget.userId,
-      );
-    });
-  }
-
   Future<void> _toggleFavorite(Product product) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('userid');

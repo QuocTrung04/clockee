@@ -20,14 +20,6 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   User? user;
 
-  // int tinhSoLuong() {
-  //   final cart = Provider.of<AppData>(context).cartItems;
-  //   int soluong = 0;
-  //   for (var itemsl in cart) {
-  //     soluong += itemsl.quantity;
-  //   }
-  //   return soluong;
-  // }
   int tinhSoLuong() {
     final cartItems = Provider.of<AppData>(context).cartItems;
     int soLuong = cartItems.fold(0, (sum,item) => sum + item.quantity);
@@ -100,28 +92,48 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   const SizedBox(width: 5),
-                  Builder(builder: (context){
-                        final appData = Provider.of<AppData>(context);
-                        int soLuong = appData.cartItems.fold(0, (sum, item) => sum + item.quantity);
+                  Builder(builder: (context) {
+                    final appData = Provider.of<AppData>(context);
+                    int soLuong = appData.cartItems.fold(0, (sum, item) => sum + item.quantity);
 
-                        return badges.Badge(
-                          badgeContent: Text(
-                            '${soLuong}',
-                            style: TextStyle(color: Colors.white),
+                    return Stack(
+                      children: [
+                        IconButton(
+                          onPressed: () => showSlideCart(context),
+                          icon: const IconifyIcon(
+                            icon: 'solar:cart-bold',
+                            color: Color(0xFF662D91),
                           ),
-                          child: IconButton(
-                            onPressed: () {
-                              showSlideCart(context);
-                            },
-                            icon: const IconifyIcon(
-                              icon: 'solar:cart-bold',
-                              color: Color(0xFF662D91),
+                        ),
+                        if (soLuong > 0)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              width: 18,  // chiều rộng cố định
+                              height: 18, // chiều cao cố định
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: FittedBox(  // để chữ co vừa trong vòng tròn
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  '$soLuong',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                              ),
                             ),
                           ),
-                        );
-                    }
-                  )
-                  
+                      ],
+                    );
+                  }),
                 ],
               ),
             ),
