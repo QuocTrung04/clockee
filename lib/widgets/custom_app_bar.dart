@@ -29,12 +29,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
   //   return soluong;
   // }
   int tinhSoLuong() {
-    int quantity = 0;
     final cartItems = Provider.of<AppData>(context).cartItems;
-    for (var itemsl in cartItems) {
-      quantity += itemsl.quantity;
-    }
-    return quantity;
+    int soLuong = cartItems.fold(0, (sum,item) => sum + item.quantity);
+    // for (var itemsl in cartItems) {
+    //   quantity += itemsl.quantity;
+    // }\
+    // return quantity;
+    return soLuong;
   }
 
   @override
@@ -99,21 +100,28 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   const SizedBox(width: 5),
-                  badges.Badge(
-                    badgeContent: Text(
-                      '${tinhSoLuong()}',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    child: IconButton(
-                      onPressed: () {
-                        showSlideCart(context);
-                      },
-                      icon: const IconifyIcon(
-                        icon: 'solar:cart-bold',
-                        color: Color(0xFF662D91),
-                      ),
-                    ),
-                  ),
+                  Builder(builder: (context){
+                        final appData = Provider.of<AppData>(context);
+                        int soLuong = appData.cartItems.fold(0, (sum, item) => sum + item.quantity);
+
+                        return badges.Badge(
+                          badgeContent: Text(
+                            '${soLuong}',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              showSlideCart(context);
+                            },
+                            icon: const IconifyIcon(
+                              icon: 'solar:cart-bold',
+                              color: Color(0xFF662D91),
+                            ),
+                          ),
+                        );
+                    }
+                  )
+                  
                 ],
               ),
             ),

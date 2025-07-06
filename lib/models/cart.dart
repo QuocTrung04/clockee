@@ -29,4 +29,12 @@ class CartItem {
       quantity: json['Quantity'] as int,
     );
   }
+
+  @override
+    bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CartItem && runtimeType == other.runtimeType && productId == other.productId;
+
+  @override
+    int get hashCode => productId.hashCode;
 }

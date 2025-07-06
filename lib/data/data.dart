@@ -43,6 +43,13 @@ class AppData extends ChangeNotifier {
   }
 
   void addToCart(CartItem item) {
+    for (var items in _cartItems){
+      if (items.productId == item.productId){
+        items.quantity ++;
+        notifyListeners();
+        return;
+      }
+    }
     _cartItems.add(item);
     notifyListeners();
   }
@@ -52,15 +59,16 @@ class AppData extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeAllCart() {
-    cartItems.clear();
+  void decreaseCart(int index) {
+    _cartItems[index].quantity--;
     notifyListeners();
   }
 
-  void clearCart() {
+  void removeAllCart() {
     _cartItems.clear();
     notifyListeners();
   }
+
 
   Future<void> loadUserFromLocal() async {
     final prefs = await SharedPreferences.getInstance();

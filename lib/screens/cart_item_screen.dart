@@ -47,8 +47,9 @@ class _CartItemScreenState extends State<CartItemScreen>
 
   @override
   Widget build(BuildContext context) {
-    final CartItem = Provider.of<AppData>(context).cartItems;
-    final UserData = Provider.of<AppData>(context).user;
+    final appdata = Provider.of<AppData>(context,listen: true);
+    final CartItem = appdata.cartItems;
+    final UserData = appdata.user;
     return SafeArea(
       child: Material(
         color: Colors.black87,
@@ -107,14 +108,14 @@ class _CartItemScreenState extends State<CartItemScreen>
                               )
                             : ListView.builder(
                                 itemCount: CartItem
-                                    .length, // 👈 ĐỪNG quên thêm dòng này!
+                                    .length, 
                                 itemBuilder: (context, index) {
                                   final item = CartItem[index];
                                   return CartItemWidget(
                                     item: item,
                                     onIncrease: () {
                                       setState(() {
-                                        item.quantity++;
+                                        appdata.addToCart(item);
                                         ApiService.addToCart(
                                           UserData!.userId,
                                           item.productId,
@@ -124,13 +125,13 @@ class _CartItemScreenState extends State<CartItemScreen>
                                     onDecrease: () {
                                       setState(() {
                                         if (item.quantity > 1) {
-                                          item.quantity--;
+                                          appdata.decreaseCart(index);
                                           ApiService.subtractFromCart(
                                             UserData!.userId,
                                             item.productId,
                                           );
                                         } else {
-                                          CartItem.removeAt(index);
+                                          appdata.removeAllCart();
                                           ApiService.removeFromCart(
                                             UserData!.userId,
                                             item.productId,
@@ -140,7 +141,7 @@ class _CartItemScreenState extends State<CartItemScreen>
                                     },
                                     onDelete: () {
                                       setState(() {
-                                        CartItem.removeAt(index);
+                                        appdata.removeAllCart();
                                         ApiService.removeFromCart(
                                           UserData!.userId,
                                           item.productId,

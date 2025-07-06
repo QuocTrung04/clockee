@@ -510,12 +510,13 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                               child: child,
                             );
                           },
-                          child: IconifyIcon(
-                            key: ValueKey(favorite),
-                            icon: widget.sanPham.favorite == 1
-                                ? 'iconoir:heart-solid'
-                                : 'iconoir:heart',
-                            color: const Color(0xFF662D91),
+                          child: Image.asset(
+                            widget.sanPham.favorite == 1
+                                ? 'assets/images/heart.png' 
+                                : 'assets/images/heartoutline.png',
+                            width: 24,    // đặt kích thước phù hợp
+                            height: 24,
+                            color: const Color(0xFF662D91),  // Nếu bạn muốn đổi màu, hoặc bỏ dòng này nếu ảnh đầy màu
                           ),
                         ),
                       ),
