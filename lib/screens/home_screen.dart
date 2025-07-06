@@ -222,7 +222,7 @@ void loadProducts() async {
                                     crossAxisCount: 2,
                                     crossAxisSpacing: 3,
                                     mainAxisSpacing: 5,
-                                    childAspectRatio: 0.52,
+                                    childAspectRatio: 0.51,
                                   ),
                               itemBuilder: (context, index) {
                                 return SanPhamWidget(
