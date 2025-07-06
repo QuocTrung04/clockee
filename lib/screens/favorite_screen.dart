@@ -33,7 +33,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
   Future<List<Product>> fetchFavoriteProducts() async {
     if (userId == null) return [];
     final list = await ApiService.fetchFavoriteProducts(userId!);
-    print('Danh sách nhận được: ${list.map((e) => e.productId).toList()}');
     return list;
   }
 
@@ -46,7 +45,6 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     return ValueListenableBuilder(
       valueListenable: favoriteChangedNotifier,
       builder: (context, value, child) {
-        print('FavoriteScreen rebuild, value = $value');
         return FutureBuilder<List<Product>>(
           future: fetchFavoriteProducts(),
           builder: (context, snapshot) {
@@ -137,9 +135,10 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                       );
                       if (!mounted) return;
                       if (success) {
-                        favoriteChangedNotifier.value =
-                            !favoriteChangedNotifier.value;
-                        print(widget.sanPham.favorite);
+                        setState(() {
+                          widget.sanPham.favorite = 0;
+                        });
+                        favoriteChangedNotifier.value++;
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Đã xóa khỏi yêu thích'),

@@ -13,8 +13,8 @@ void main() async {
   await appData.loadCart();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AppData(),
+    ChangeNotifierProvider.value(
+      value: appData, // Dùng chính instance đã load dữ liệu
       child: MyApp(),
     ),
   );

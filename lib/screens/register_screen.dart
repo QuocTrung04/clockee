@@ -17,27 +17,46 @@ class _StateRegisterScreen extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _corfirmPasswordController =
+  final TextEditingController _confirmPasswordController =
       TextEditingController();
   Future<void> _dangKy() async {
-    if (_passwordController.text != _corfirmPasswordController.text) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Mật khẩu không khớp')));
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Mật khẩu không khớp'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    } else if (_nameController.text.contains(RegExp(r'\s'))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Tài khoản không được chứa khoảng trống trống'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    } else if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Vui lòng nhập đầy đủ thông tin'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
-
     final success = await ApiService.registerUser(
       name: _nameController.text,
       phone: _phoneController.text,
       email: _emailController.text,
       password: _passwordController.text,
     );
-
     if (!mounted) {
       return;
     }
-    print(success);
     if (success) {
       showDialog(
         context: context,
@@ -292,7 +311,7 @@ class _StateRegisterScreen extends State<RegisterScreen> {
                                         padding: EdgeInsets.all(10),
                                         child: TextField(
                                           controller:
-                                              _corfirmPasswordController,
+                                              _confirmPasswordController,
                                           obscureText: _confirmpassword,
                                           decoration: InputDecoration(
                                             hintText: "Nhập lại mật khẩu",

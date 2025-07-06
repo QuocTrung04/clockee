@@ -1,6 +1,9 @@
+import 'package:clockee/data/data.dart';
+import 'package:clockee/screens/confirm_email.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:provider/provider.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -9,9 +12,30 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _StateLoginScreen extends State<ChangePasswordScreen> {
+  final TextEditingController _oldPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   bool _obsOldPassword = true;
   bool _obsNewPassword = true;
   bool _obsCorfimPassword = true;
+
+  void _changPassword() async {
+    final result = await Provider.of<AppData>(context, listen: false)
+        .changePassword(
+          oldPassword: _oldPasswordController.text,
+          newPassword: _newPasswordController.text,
+          confirmPassword: _confirmPasswordController.text,
+        );
+    if (!mounted) return;
+    final isSuccess = result == 'Đổi mật khẩu thành công';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(result),
+        backgroundColor: isSuccess ? Colors.green : Colors.red,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +133,7 @@ class _StateLoginScreen extends State<ChangePasswordScreen> {
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(),
                                       child: TextField(
+                                        controller: _oldPasswordController,
                                         obscureText: _obsOldPassword,
                                         decoration: InputDecoration(
                                           hintText: "Mật khẩu cũ",
@@ -143,6 +168,7 @@ class _StateLoginScreen extends State<ChangePasswordScreen> {
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(),
                                       child: TextField(
+                                        controller: _newPasswordController,
                                         obscureText: _obsNewPassword,
                                         decoration: InputDecoration(
                                           hintText: "Mật khẩu mới",
@@ -177,6 +203,7 @@ class _StateLoginScreen extends State<ChangePasswordScreen> {
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(),
                                       child: TextField(
+                                        controller: _confirmPasswordController,
                                         obscureText: _obsCorfimPassword,
                                         decoration: InputDecoration(
                                           hintText: "Nhập lại mật khẩu mới",
@@ -210,13 +237,39 @@ class _StateLoginScreen extends State<ChangePasswordScreen> {
                                 ),
                               ),
                               SizedBox(height: 40),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ConfirmEmail(),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(color: Colors.grey),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Quên mật khẩu',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade400,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 40),
                               Align(alignment: Alignment.centerLeft),
                               SizedBox(height: 40),
                               SizedBox(
                                 width: 230,
                                 height: 50,
                                 child: GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    _changPassword();
+                                  },
                                   child: Container(
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(

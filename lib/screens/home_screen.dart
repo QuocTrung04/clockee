@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:clockee/models/cart.dart';
-
 import 'package:clockee/data/favorite_notifier.dart';
 import 'package:clockee/screens/cart_item_screen.dart';
 import 'package:clockee/screens/product_details_screen.dart';
@@ -12,8 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/data.dart';
 import '../models/sanpham.dart';
-import '../models/orderitem.dart';
-import '../models/order.dart';
 import '../models/user.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,7 +21,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  User user = new User(userId: null, email: '', name: '', phone: '', userName: '', isAdmin: '', birthday: null, sex: null, isDelete: null);
+  User user = User(
+    userId: 0,
+    email: '',
+    name: '',
+    phone: '',
+    userName: '',
+    isAdmin: null,
+    birthday: null,
+    sex: null,
+    isDelete: null,
+  );
   final ValueNotifier<int> gioitinhNotifier = ValueNotifier<int>(1);
   List<Product> allProducts = [];
   List<CartItem> cartItems = [];
@@ -32,65 +39,51 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-     WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final appData = Provider.of<AppData>(context, listen: false);
+      final currentUser = appData.user;
+
+      if (currentUser != null) {
+        setState(() {
+          user = currentUser;
+        });
+        _initCart();
+        loadProducts();
+      }
+    });
+  }
+
+  void _initCart() async {
     final appData = Provider.of<AppData>(context, listen: false);
     final currentUser = appData.user;
 
-    if (currentUser != null) {
-      setState(() {
-        user = currentUser;
-      });
-      _initCart();
-      loadProducts();
-    } else {
-      print('User chưa đăng nhập hoặc chưa load xong');
-    }
-  });
+    if (currentUser != null && currentUser.userId != null) {
+      try {
+        final fetchedItems = await ApiService.fetchCartItem(
+          currentUser.userId!,
+        );
+        setState(() {
+          cartItems = fetchedItems;
+        });
+      } catch (e) {}
+    } else {}
   }
 
-void _initCart() async {
-  final appData = Provider.of<AppData>(context, listen: false);
-  final currentUser = appData.user;
-
-  if (currentUser != null && currentUser.userId != null) {
-    try {
-      final fetchedItems = await ApiService.fetchCartItem(currentUser.userId!);
-      setState(() {
-        cartItems = fetchedItems;
-      });
-    } catch (e) {
-      print('Lỗi khi tải giỏ hàng: $e');
-    }
-  } else {
-    print('User chưa đăng nhập hoặc userId bị null');
-  }
-}
-
-
-void loadProducts() async {
-  final appData = Provider.of<AppData>(context, listen: false);
-  var userid = 0;
-  if(user != null){
-     userid = user.userId!;
+  void loadProducts() async {
+    final appData = Provider.of<AppData>(context, listen: false);
+    var userid = 0;
+    if (user != null) {
+      userid = user.userId!;
     }
     try {
-      
       final products = await ApiService.fetchProducts(userid);
-      print('ĐÂY LÀ ID 🫵: $user');
-      print('Sản phẩm từ API: ${products.length}');
-      for (var p in products) {
-        print('${p.name} - ${p.sex}');
-      }
 
       setState(() {
         allProducts = products;
         isLoading = false;
       });
-    } catch (e) {
-      print('Lỗi tải sản phẩm: $e');
-    }
+    } catch (e) {}
   }
-
 
   @override
   void dispose() {
@@ -193,13 +186,10 @@ void loadProducts() async {
               builder: (context, constraints) {
                 return ValueListenableBuilder(
                   valueListenable: favoriteChangedNotifier,
-                  builder: (context, _, __) {
-                    // Mỗi lần Notifier đổi, FutureBuilder fetch lại API
-                    final userId = user?.userId ?? 0;
+                  builder: (context, _, _) {
+                    final userId = user.userId ?? 0;
                     return FutureBuilder<List<Product>>(
-                      future: ApiService.fetchProducts(
-                        userId
-                      ), // GỌI LẠI API
+                      future: ApiService.fetchProducts(userId),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
                           return const Center(
@@ -387,6 +377,8 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final CartItems = Provider.of<AppData>(context).cartItems;
+    final UserData = Provider.of<AppData>(context).user;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -446,17 +438,19 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             userId: userId,
                             productId: widget.sanPham.productId,
                           );
+                          if (!mounted) return;
                           if (success) {
                             setState(() {
                               favorite = 0;
                             });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Đã xóa khỏi yêu thích'),
-                              ),
-                            );
-                            favoriteChangedNotifier.value =
-                                !favoriteChangedNotifier.value;
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                const SnackBar(
+                                  content: Text('Đã xóa khỏi yêu thích'),
+                                ),
+                              );
+                            favoriteChangedNotifier.value++;
                           }
                         } else {
                           // Thêm yêu thích
@@ -468,24 +462,26 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                             setState(() {
                               favorite = 1;
                             });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Đã thêm vào yêu thích'),
-                              ),
-                            );
-                            favoriteChangedNotifier.value =
-                                !favoriteChangedNotifier.value;
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                const SnackBar(
+                                  content: Text('Đã thêm vào yêu thích'),
+                                ),
+                              );
+                            favoriteChangedNotifier.value++;
                           }
                         }
 
                         if (!success) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Không thể cập nhật yêu thích'),
-                            ),
-                          );
-                          favoriteChangedNotifier.value =
-                              !favoriteChangedNotifier.value;
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(
+                              const SnackBar(
+                                content: Text('Không thể cập nhật yêu thích'),
+                              ),
+                            );
+                          favoriteChangedNotifier.value++;
                         }
                       },
 
@@ -495,6 +491,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
+
                           boxShadow: favorite == 1
                               ? [
                                   BoxShadow(
@@ -515,7 +512,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                           },
                           child: IconifyIcon(
                             key: ValueKey(favorite),
-                            icon: favorite == 1
+                            icon: widget.sanPham.favorite == 1
                                 ? 'iconoir:heart-solid'
                                 : 'iconoir:heart',
                             color: const Color(0xFF662D91),
@@ -528,12 +525,18 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
               ),
             ),
             SizedBox(height: 5),
-            Text(
-              widget.sanPham.name ?? "",
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Text(
+                widget.sanPham.name ?? "",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             ),
             const SizedBox(height: 10),
             Text(
@@ -569,21 +572,41 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                           decoration: TextDecoration.lineThrough,
                           decorationColor: Colors.grey,
                           color: Color(0xFFCFCFCF),
-                          fontSize: 15,
+                          fontSize: 14,
                         ),
                       ),
                       Text(
-                        'Giá KM:${_formatCurrency(widget.sanPham.sellPrice!)}đ',
+                        'Giá KM: ${_formatCurrency(widget.sanPham.sellPrice!)}đ',
                         style: const TextStyle(
                           color: Color(0xFF662D91),
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 16,
                         ),
                       ),
+                      SizedBox(height: 8),
                     ],
                   ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                ApiService.addToCart(
+                  UserData!.userId,
+                  widget.sanPham.productId,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Đã thêm sản phẩm vào giỏ')),
+                );
+                favoriteChangedNotifier.value++;
+                final cart = CartItem(
+                  productId: widget.sanPham.productId,
+                  imageUrl: widget.sanPham.imageUrl.toString(),
+                  name: widget.sanPham.name.toString(),
+                  actualPrice: widget.sanPham.actualPrice!,
+                  price: widget.sanPham.sellPrice!,
+                  model: widget.sanPham.watchModel.toString(),
+                  quantity: 1,
+                );
+                Provider.of<AppData>(context, listen: false).addToCart(cart);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF662D91),
                 foregroundColor: Colors.white,

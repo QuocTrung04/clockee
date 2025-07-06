@@ -18,39 +18,43 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  User? user; 
+  User? user;
 
+  // int tinhSoLuong() {
+  //   final cart = Provider.of<AppData>(context).cartItems;
+  //   int soluong = 0;
+  //   for (var itemsl in cart) {
+  //     soluong += itemsl.quantity;
+  //   }
+  //   return soluong;
+  // }
   int tinhSoLuong() {
-    final cart = Provider.of<AppData>(context).cartItems;
-    int soluong = 0;
-    for (var itemsl in cart) {
-      soluong += itemsl.quantity;
+    int quantity = 0;
+    final cartItems = Provider.of<AppData>(context).cartItems;
+    for (var itemsl in cartItems) {
+      quantity += itemsl.quantity;
     }
-    return soluong;
+    return quantity;
   }
 
-   @override
+  @override
   void initState() {
     super.initState();
     user = Provider.of<AppData>(context, listen: false).user;
 
-    if(user != null){
+    if (user != null) {
       _loadCart();
     }
   }
 
   void _loadCart() async {
     final appData = Provider.of<AppData>(context, listen: false);
-    print("day la load cart");
 
     if (user != null) {
       try {
         final items = await ApiService.fetchCartItem(user!.userId!);
-        appData.setCart(items); // 👈 Gán vào AppData
-        print("đã gán cartitem");
-      } catch (e) {
-        print('Lỗi khi lấy giỏ hàng: $e');
-      }
+        appData.setCart(items);
+      } catch (e) {}
     }
   }
 
@@ -119,5 +123,3 @@ class _CustomAppBarState extends State<CustomAppBar> {
     );
   }
 }
-
-

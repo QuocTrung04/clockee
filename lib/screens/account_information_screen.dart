@@ -37,7 +37,6 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
     if (!mounted) return;
 
     if (id == null) {
-      debugPrint('User ID not found');
       return;
     }
 
@@ -48,12 +47,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
         userId = id;
         _displayName = user.name;
       });
-      debugPrint(
-        "Fetched displayName: $_displayName",
-      );
-    } catch (e) {
-      debugPrint('Error fetching user: $e');
-    }
+    } catch (e) {}
   }
 
   @override
@@ -176,23 +170,23 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                     Icons.logout,
                     'Đăng xuất',
                     isLogout: true,
+
                     onTap: () async {
                       final shouldLogout = await showDialog<bool>(
                         context: context,
                         builder: (context) => AlertDialog(
+                          backgroundColor: Colors.white,
                           title: Text('Xác nhận đăng xuất'),
                           content: Text(
                             'Bạn có chắc chắn muốn đăng xuất không?',
                           ),
                           actions: [
                             TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context, false), // Huỷ
+                              onPressed: () => Navigator.pop(context, false),
                               child: Text('Huỷ'),
                             ),
                             TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context, true), // Đồng ý
+                              onPressed: () => Navigator.pop(context, true),
                               child: Text(
                                 'Đăng xuất',
                                 style: TextStyle(color: Colors.red),
@@ -203,9 +197,13 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                       );
 
                       if (shouldLogout == true) {
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.clear();
+                        // GỌI ĐÚNG PROVIDER LOGOUT
+                        await Provider.of<AppData>(
+                          context,
+                          listen: false,
+                        ).logout();
 
+                        if (!context.mounted) return;
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

@@ -39,4 +39,25 @@ class Order {
   }
 }
 
+class ReturnOrder{
+  final String message;
+  final int orderId;
+  final String orderCode;
+  final int totalPrice;
 
+  ReturnOrder({
+    required this.message,
+    required this.orderId,
+    required this.orderCode,
+    required this.totalPrice,
+  });
+
+  factory ReturnOrder.fromJson(Map<String, dynamic> json) {
+    return ReturnOrder(
+       message: json['message'] as String,
+       orderId: json['order_id'] as int,
+      orderCode: json['order_code'] as String,
+      totalPrice: json['total_price'] as int
+    );
+  }
+}

@@ -1,8 +1,10 @@
+import 'package:clockee/data/data.dart';
 import 'package:clockee/screens/account_information_screen.dart';
 import 'package:clockee/screens/favorite_screen.dart';
 import 'package:clockee/screens/home_screen.dart';
 import 'package:clockee/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/account_screen.dart';
 import 'custom_app_bar.dart';
@@ -19,23 +21,15 @@ class CustomMainScreen extends StatefulWidget {
 class _CustomMainScreenState extends State<CustomMainScreen> {
   int _currentIndex = 1;
 
-  bool _isLoggedIn = false;
-
   @override
   void initState() {
     super.initState();
-    _loadLoginStatus();
-  }
-
-  Future<void> _loadLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final appData = Provider.of<AppData>(context);
+    final bool _isLoggedIn = appData.user != null;
     final List<Widget> screen = [
       _isLoggedIn
           ? const FavoriteScreen()

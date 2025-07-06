@@ -1,8 +1,62 @@
+import 'package:clockee/data/data.dart';
+import 'package:clockee/models/address.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
+import 'package:provider/provider.dart';
 
-class AddAdressScreen extends StatelessWidget {
+class AddAdressScreen extends StatefulWidget {
   const AddAdressScreen({super.key});
+
+  @override
+  State<AddAdressScreen> createState() => _AddAdressScreenState();
+}
+
+class _AddAdressScreenState extends State<AddAdressScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _provinceController = TextEditingController();
+  final TextEditingController _districtController = TextEditingController();
+  final TextEditingController _communeController = TextEditingController();
+  final TextEditingController _detailController = TextEditingController();
+  final TextEditingController _streetController = TextEditingController();
+  bool _isDefault = false;
+
+  void _addAddress() async {
+    final userId =
+        Provider.of<AppData>(context, listen: false).user?.userId ?? 0;
+    Address newAddress = Address(
+      receiveid: null,
+      userId: userId,
+      name: _nameController.text,
+      phone: _phoneController.text,
+      province: _provinceController.text,
+      commune: _communeController.text,
+      district: _districtController.text,
+      street: _streetController.text,
+      addressDetail: _detailController.text,
+      isDefault: _isDefault,
+    );
+    final result = await Provider.of<AppData>(
+      context,
+      listen: false,
+    ).addAddress(newAddress);
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Thêm địa chỉ thành công'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Lỗi khi thêm địa chỉ'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,17 +111,68 @@ class AddAdressScreen extends StatelessWidget {
               ),
 
               // Các TextField
-              _buildTextField(label: 'Tên', border: border),
+              _buildTextField(
+                label: 'Tên',
+                border: border,
+                controller: _nameController,
+              ),
               _buildTextField(
                 label: 'Số điện thoại',
                 border: border,
                 keyboardType: TextInputType.phone,
+                controller: _phoneController,
               ),
-              _buildTextField(label: 'Tỉnh/Thành Phố', border: border),
-              _buildTextField(label: 'Quận/Huyện', border: border),
-              _buildTextField(label: 'Phường/Xã', border: border),
-              _buildTextField(label: 'Đường', border: border),
+              _buildTextField(
+                label: 'Tỉnh/Thành Phố',
+                border: border,
+                controller: _provinceController,
+              ),
+              _buildTextField(
+                label: 'Quận/Huyện',
+                border: border,
+                controller: _districtController,
+              ),
+              _buildTextField(
+                label: 'Phường/Xã',
+                border: border,
+                controller: _communeController,
+              ),
+              _buildTextField(
+                label: 'Đường',
+                border: border,
+                controller: _streetController,
+              ),
+              _buildTextField(
+                label: 'Địa chỉ chi tiết',
+                border: border,
+                controller: _detailController,
+              ),
 
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Text(
+                      'Đặt làm địa chỉ mặc định',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(width: 5),
+                    Switch(
+                      value: _isDefault,
+                      onChanged: (val) {
+                        setState(() {
+                          _isDefault = val;
+                        });
+                      },
+                      activeColor: Color(0xFF662D91),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 100),
             ],
           ),
@@ -82,7 +187,7 @@ class AddAdressScreen extends StatelessWidget {
             height: 52,
             child: ElevatedButton(
               onPressed: () {
-                // TODO: xử lý lưu
+                _addAddress();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
@@ -110,11 +215,13 @@ class AddAdressScreen extends StatelessWidget {
 Widget _buildTextField({
   required String label,
   required OutlineInputBorder border,
+  required TextEditingController controller,
   TextInputType keyboardType = TextInputType.text,
 }) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
     child: TextField(
+      controller: controller,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,

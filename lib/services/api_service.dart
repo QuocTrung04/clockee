@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:clockee/data/data.dart';
+import 'package:clockee/models/address.dart';
+import 'package:clockee/models/bankinfomation.dart';
 import 'package:clockee/models/cart.dart';
+import 'package:clockee/models/order.dart';
 import 'package:clockee/models/sanpham.dart';
 import 'package:clockee/models/user.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -28,31 +28,30 @@ class ApiService {
   }
 
   //API ĐĂNG NHẬP
-static Future<User?> login(String username, String password) async {
-  final url = Uri.parse('http://103.77.243.218/api/login');
+  static Future<User?> login(String username, String password) async {
+    final url = Uri.parse('http://103.77.243.218/api/login');
 
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: {'username': username, 'password': password},
-  );
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: {'username': username, 'password': password},
+    );
 
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
 
-    if (data['User_id'] != null && data['Username'] == username) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
-      await prefs.setString('username', data['Username']);
-      await prefs.setInt('userid', data['User_id']);
+      if (data['User_id'] != null && data['Username'] == username) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('username', data['Username']);
+        await prefs.setInt('userid', data['User_id']);
 
-      return User.fromJson(data); // 👈 trả về user để gán ngoài
+        return User.fromJson(data);
+      }
     }
+
+    return null;
   }
-
-  return null;
-}
-
 
   //API ĐĂNG KÝ
 
@@ -193,6 +192,7 @@ static Future<User?> login(String username, String password) async {
     }
   }
 
+  //API XÓA YÊU THÍCH
   static Future<bool> removeFavoriteProduct({
     required int userId,
     required int productId,
@@ -243,8 +243,9 @@ static Future<User?> login(String username, String password) async {
     }
   }
 
+  //API GIỎ HÀNG
   static Future<List<CartItem>> fetchCartItem(int userId) async {
-      final url = Uri.parse('http://103.77.243.218/orderitem/$userId');
+    final url = Uri.parse('http://103.77.243.218/orderitem/$userId');
 
     try {
       final response = await http.get(url);
@@ -257,6 +258,258 @@ static Future<User?> login(String username, String password) async {
       }
     } catch (e) {
       throw Exception('Failed to fetch products: $e');
+    }
+  }
+
+  static Future<bool> addToCart(int userId, int productId) async {
+    final url = Uri.parse('http://103.77.243.218/api/cart/add');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'User_id': userId, 'Product_id': productId}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Add to cart failed: ${response.body}');
+      return false;
+    }
+  }
+
+  static Future<bool> subtractFromCart(int userId, int productId) async {
+    final url = Uri.parse('http://103.77.243.218/api/cart/subtract');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'User_id': userId, 'Product_id': productId}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Subtract from cart failed: ${response.body}');
+      return false;
+    }
+  }
+
+  //API XÓA GIỎ HÀNG
+  static Future<bool> removeFromCart(int userId, int productId) async {
+    final url = Uri.parse('http://103.77.243.218/api/cart/remove');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'User_id': userId, 'Product_id': productId}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Remove from cart failed: ${response.body}');
+      return false;
+    }
+  }
+
+  //API ĐỊA CHỈ
+  static Future<List<Address>> fetchAddrress(int userId) async {
+    final url = Uri.parse('http://103.77.243.218/receiveaddress/$userId');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final body = response.body.trim();
+
+      if (body.isEmpty || body == 'null' || body == '{}') {
+        return [];
+      }
+
+      final decoded = json.decode(body);
+
+      if (decoded is List) {
+        return decoded.map((e) => Address.fromJson(e)).toList();
+      }
+      if (decoded is Map && decoded['message'] != null) {
+        return [];
+      }
+      return [];
+    } else {
+      print('Lỗi khi lấy địa chỉ: ${response.statusCode} - ${response.body}');
+      throw Exception(
+        'Lỗi khi lấy địa chỉ: ${response.statusCode} - ${response.body}',
+      );
+    }
+  }
+
+  //API THÊM ĐỊA CHỈ
+  static Future<bool> addAddress(Address address) async {
+    final url = Uri.parse('http://103.77.243.218/api/receiveaddress');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(address.toJson()),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // Thêm thành công
+      return true;
+    } else {
+      print('Lỗi khi thêm địa chỉ: ${response.statusCode} - ${response.body}');
+      return false;
+    }
+  }
+
+  //API SỬA ĐỊA CHỈ
+  static Future<bool> editAddress(int id, Address address) async {
+    final url = Uri.parse('http://103.77.243.218/api/receiveaddress/$id');
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(address.toJson()),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print(
+        'Lỗi khi cập nhật địa chỉ: ${response.statusCode} - ${response.body}',
+      );
+      return false;
+    }
+  }
+
+  static Future<ReturnOrder?> createOrder(
+    int userId,
+    int receiveId,
+    int paymentMethod,
+  ) async {
+    final url = Uri.parse('http://103.77.243.218/api/createorder');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'User_id': userId,
+          'Receive_id': receiveId,
+          'Payment_method': paymentMethod,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        print("Thêm order thành công!");
+        return ReturnOrder.fromJson(jsonData);
+      } else {
+        print("Thêm order thất bại");
+        return null;
+      }
+    } catch (e) {
+      print("Thêm order thất bại${e}}");
+      return null;
+    }
+  }
+
+  static Future<BankInfomation?> fetchBankInfo() async {
+    const url = 'http://103.77.243.218/bankinformation';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+
+        return BankInfomation.fromJson(jsonData);
+      } else {
+        print('Lỗi server: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Lỗi khi gọi API: $e');
+      return null;
+    }
+  }
+
+  static Future<String> generateVietQR({
+    required String accountNo,
+    required String accountName,
+    required int acqId,
+    required int amount,
+    required String addInfo,
+    required String clientId,
+    required String apiKey,
+  }) async {
+    final url = Uri.parse('https://api.vietqr.io/v2/generate');
+    final headers = {
+      'x-client-id': clientId,
+      'x-api-key': apiKey,
+      'Content-Type': 'application/json',
+    };
+    final body = json.encode({
+      'accountNo': accountNo,
+      'accountName': accountName,
+      'acqId': acqId,
+      'amount': amount,
+      'addInfo': addInfo,
+      'format': 'image',
+      'template': 'compact',
+    });
+
+    final response = await http.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['code'] == '00') {
+        return data['data']['qrDataURL'];
+      } else {
+        throw Exception('Error: ${data['desc']}');
+      }
+    } else {
+      throw Exception('Failed to generate QR code');
+    }
+  }
+
+  static Future<String> changePassword({
+    required int userId,
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    final url = Uri.parse('http://103.77.243.218/api/changepassword');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'User_id': userId,
+        'old_password': oldPassword,
+        'new_password': newPassword,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      print(body);
+      if (body is Map && body['message'] == 'Mật khẩu cũ không đúng') {
+        return 'wrong_old';
+      }
+      if (body is Map && body['message'] == 'Đổi mật khẩu thành công') {
+        return 'success';
+      }
+      if (body is Map && body['message'] == 'Không dùng lại mật khẩu cũ') {
+        return 'wrong_new';
+      }
+      return 'error';
+    } else {
+      return 'error';
+    }
+  }
+
+  //API xóa ĐỊA CHỈ
+  static Future<bool> deleteAddress(int addressId) async {
+    final url = Uri.parse(
+      'http://103.77.243.218/api/receiveaddress/$addressId',
+    );
+    final response = await http.delete(url);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('xoa dia chi that bai ${response.statusCode}');
+      return false;
     }
   }
 }
