@@ -499,6 +499,25 @@ class ApiService {
     }
   }
 
+  static Future<int> fogotPassword({
+    required int userId,
+    required String newPassword,
+  }) async {
+    final url = Uri.parse('http://103.77.243.218/api/fogetpassword');
+    print("$userId, $newPassword");
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'User_id': userId, 'new_password': newPassword}),
+    );
+    print("status code: ${response.statusCode}");
+    if (response.statusCode == 200) {
+      return response.statusCode;
+    } else {
+      return -1;
+    }
+  }
+
   //API xóa ĐỊA CHỈ
   static Future<bool> deleteAddress(int addressId) async {
     final url = Uri.parse(
@@ -529,6 +548,49 @@ class ApiService {
       return images;
     } else {
       throw Exception('Failed to load banner images');
+    }
+  }
+
+  static Future<int> sendOtp(String email) async {
+    final url = Uri.parse('http://103.77.243.218/api/sendotp');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return response.statusCode;
+      } else {
+        final data = json.decode(response.body);
+        return response.statusCode;
+      }
+    } catch (e) {
+      return -1;
+    }
+  }
+
+  static Future<int?> verifyOtp(String email, String otpCode) async {
+    final url = Uri.parse('http://103.77.243.218/api/verifyotp');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'otp_code': otpCode}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['user_id'] as int?;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:clockee/data/user_prefs.dart';
+import 'package:clockee/screens/confirm_email.dart';
 import 'package:clockee/screens/home_screen.dart';
 import 'package:clockee/screens/register_screen.dart';
 import 'package:clockee/services/api_service.dart';
@@ -186,7 +187,9 @@ class _StateLoginScreen extends State<LoginScreen> {
                               Row(
                                 children: [
                                   GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> ConfirmEmail()));
+                                    },
                                     child: Container(
                                       decoration: BoxDecoration(
                                         border: Border(

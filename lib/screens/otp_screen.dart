@@ -1,8 +1,10 @@
 import 'package:clockee/screens/forgot_password_screen.dart';
+import 'package:clockee/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+  final String email;
+  const OtpScreen({super.key, required this.email});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -66,22 +68,26 @@ class _OtpScreenState extends State<OtpScreen> {
     }
   }
 
-  void _onConfirm() {
+  void _onConfirm(String email) async {
     String otp = _controllers.map((c) => c.text).join();
-    if (otp.length < otpLength || otp.contains('')) {
+    if (otp.length < otpLength || _controllers.any((c) => c.text.isEmpty)) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Vui lòng nhập đầy đủ mã OTP')));
       return;
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ResetPasswordScreen()),
-    );
-    // Xử lý xác nhận OTP ở đây
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Mã OTP đã nhập: $otp')));
+    int? otpresponse = await ApiService.verifyOtp(email, otp);
+    if(otpresponse != null){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ResetPasswordScreen(userId: otpresponse,)),
+      );
+    }
+    else{
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Sai mã OTP')));
+    }
   }
 
   void _onResend() {
@@ -97,7 +103,7 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,) {
     return Scaffold(
       backgroundColor: Color(0xFFF3F3F3),
       appBar: AppBar(
@@ -146,7 +152,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   backgroundColor: Colors.purple,
                   foregroundColor: Colors.white, // màu chữ
                 ),
-                onPressed: _onConfirm,
+                onPressed:(){_onConfirm(widget.email);} ,
                 child: Text(
                   'Xác nhận',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
