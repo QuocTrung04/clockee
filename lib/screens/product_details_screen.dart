@@ -3,7 +3,6 @@ import 'package:clockee/data/favorite_notifier.dart';
 import 'package:clockee/models/cart.dart';
 import 'package:clockee/models/productimage.dart';
 import 'package:clockee/models/sanpham.dart';
-import 'package:clockee/models/user.dart';
 import 'package:clockee/screens/pay_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_design/iconify_design.dart';
@@ -14,10 +13,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final int productId;
+  final int userId;
 
   const ProductDetailScreen({
     super.key,
     required this.productId,
+    required this.userId,
   });
 
   @override
@@ -28,11 +29,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<Product> _productFuture;
   late Future<List<ProductImage>> productImage;
   int _currentImage = 0;
-  
+
   @override
   void initState() {
     super.initState();
-    
+    _productFuture = ApiService.fetchProductDetail(
+      widget.productId,
+      widget.userId == null ? 0 : widget.userId,
+    );
     productImage = ApiService.fetchProductImages(widget.productId);
   }
 
@@ -92,11 +96,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    User? userData = Provider.of<AppData>(context, listen: false).user;
-    _productFuture = ApiService.fetchProductDetail(
-      widget.productId,
-      userData == null? 0: userData.userId,
-    );
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -380,15 +379,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               try {
                 // Lấy product từ FutureBuilder hoặc lưu biến product trong State nếu có
                 final product = await _productFuture;
-                if(userData == null){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Bạn Chưa Đăng Nhập')),
-                  );
-                }
-                else{
-                  await ApiService.addToCart(userData.userId, product.productId); 
 
-                }
+                // Gọi API thêm giỏ hàng
+                await ApiService.addToCart(widget.userId, product.productId);
+
+                // Thông báo thành công
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Đã thêm sản phẩm vào giỏ')),

@@ -420,6 +420,7 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
           MaterialPageRoute(
             builder: (context) => ProductDetailScreen(
               productId: widget.sanPham.productId,
+              userId: userID?? 0,
             ),
           ),
         );
