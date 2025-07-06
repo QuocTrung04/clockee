@@ -3,6 +3,7 @@ import 'package:clockee/models/address.dart';
 import 'package:clockee/models/bankinfomation.dart';
 import 'package:clockee/models/cart.dart';
 import 'package:clockee/models/order.dart';
+import 'package:clockee/models/productimage.dart';
 import 'package:clockee/models/sanpham.dart';
 import 'package:clockee/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -613,16 +614,19 @@ class ApiService {
     }
   }
 
-  static Future<List<String>> fetchProductImage(int productId) async {
+  static Future<List<ProductImage>> fetchProductImages(int productId) async {
     final url = Uri.parse('http://103.77.243.218/productimages/$productId');
+
     final response = await http.get(url);
+
+    print('Status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      List<String> images = List<String>.from(data['images']);
-      return images;
+      final List<dynamic> jsonData = json.decode(response.body);
+      return jsonData.map((e) => ProductImage.fromJson(e)).toList();
     } else {
-      print('loi tai hinh anh ${response.statusCode}');
-      throw Exception(' loi tai hinh anh');
+      throw Exception('Failed to load product images: ${response.statusCode}');
     }
   }
 }

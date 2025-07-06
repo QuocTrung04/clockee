@@ -25,10 +25,22 @@ class _OrderScreenState extends State<OrderScreen> {
   ];
 
   void loadOrders(int userId) async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
     try {
-      _orders = await ApiService.fetchOrders(userId);
+      List<Order> orders = await ApiService.fetchOrders(userId);
+      setState(() {
+        _orders = orders;
+        _isLoading = false;
+      });
     } catch (e) {
-      print('Lỗi khi tải đơn hàng: $e');
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Lỗi khi tải đơn hàng: $e';
+      });
     }
   }
 
@@ -38,6 +50,9 @@ class _OrderScreenState extends State<OrderScreen> {
     super.initState();
     // _fetchOrders();
     
+    userData = Provider.of<AppData>(context, listen: false).user;
+    loadOrders(userData!.userId);
+    _selectedTab = 0;
   }
 
   
@@ -51,8 +66,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    userData = Provider.of<AppData>(context, listen: false).user;
-    loadOrders(userData!.userId);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -133,52 +147,105 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 
-  Widget _buildOrderCard(Order order) {
+Widget _buildOrderCard(Order order) {
+    if (order.orderStatus != _selectedTab) {
+      return SizedBox.shrink();
+    }
+    
     return Card(
       color: Colors.white,
-      elevation: 3,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 8),
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.fromLTRB(10.0, 6, 10, 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                order.items[0].imageUrl,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    order.items[0].productName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    order.items[0].imageUrl,
+                    width: 60,
+                    height: 60,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Giá: đ${order.items[0].sellPrice}',
-                    style: TextStyle(color: Colors.grey[700]),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                          Container(
+                            width: 150,
+                            child: Text(
+                              order.items[0].productName,
+                              maxLines: 1,
+                              style: TextStyle(fontSize: 16),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Spacer(),
+                          Text(_tabs[order.orderStatus], style: TextStyle(fontSize: 11)),
+                      ],),
+                      
+                      Row(
+                        children: [
+                          Text(
+                            order.items[0].watch_model,
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          Spacer(),
+                          Text('x${order.items[0].quantity}', style: TextStyle(color: Colors.grey)),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            'đ${_formatCurrency(order.items[0].actualPrice)}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                              decoration: TextDecoration.lineThrough,
+                              decorationColor: Colors.grey,
+                            ),
+                          ),
+                          SizedBox(width: 7),
+                          Text(
+                            'đ${_formatCurrency(order.items[0].sellPrice)}',
+                            style: TextStyle(
+                              color: Colors.purple,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Text(
-              'x${order.items[0].quantity}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [Text('Tổng số tiền: đ${_formatCurrency(order.totalPrice)}')],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  String _formatCurrency(int price) {
+    return price.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (match) => '${match[1]}.',
     );
   }
 }

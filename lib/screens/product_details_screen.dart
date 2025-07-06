@@ -1,6 +1,7 @@
 import 'package:clockee/data/data.dart';
 import 'package:clockee/data/favorite_notifier.dart';
 import 'package:clockee/models/cart.dart';
+import 'package:clockee/models/productimage.dart';
 import 'package:clockee/models/sanpham.dart';
 import 'package:clockee/screens/pay_screen.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<Product> _productFuture;
-  late Future<List<String>> productImage;
+  late Future<List<ProductImage>> productImage;
 
   @override
   void initState() {
@@ -35,7 +36,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       widget.productId,
       widget.userId,
     );
-    productImage = ApiService.fetchProductImage(widget.productId);
+    productImage = ApiService.fetchProductImages(widget.productId);
   }
 
   void _reloadProduct() {
@@ -135,7 +136,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         height: 300,
                         fit: BoxFit.contain,
                       ),
-                      FutureBuilder<List<String>>(
+                      FutureBuilder<List<ProductImage>>(
                         future: productImage,
                         builder: (context, imageSnapshot) {
                           if (imageSnapshot.connectionState ==
@@ -148,7 +149,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             return Text('Lỗi tải ảnh: ${imageSnapshot.error}');
                           } else if (!imageSnapshot.hasData ||
                               imageSnapshot.data!.isEmpty) {
-                            return SizedBox.shrink(); // Không hiển thị gì nếu không có ảnh
+                            return SizedBox.shrink(); 
                           }
 
                           final images = imageSnapshot.data!;
@@ -158,12 +159,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               scrollDirection: Axis.horizontal,
                               itemCount: images.length,
                               itemBuilder: (context, index) {
-                                final imageUrl =
-                                    'http://103.77.243.218/productimages/${widget.productId}/${images[index]}';
                                 return Padding(
                                   padding: EdgeInsets.all(8),
                                   child: Image.network(
-                                    imageUrl,
+                                    images[index].imageUrl!,
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ),
