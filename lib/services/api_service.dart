@@ -508,12 +508,9 @@ class ApiService {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'User_id': userId,
-        'new_password': newPassword,
-      }),
+      body: jsonEncode({'User_id': userId, 'new_password': newPassword}),
     );
-    print ("status code: ${response.statusCode}");
+    print("status code: ${response.statusCode}");
     if (response.statusCode == 200) {
       return response.statusCode;
     } else {
@@ -583,10 +580,7 @@ class ApiService {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'otp_code': otpCode,
-        }),
+        body: jsonEncode({'email': email, 'otp_code': otpCode}),
       );
 
       if (response.statusCode == 200) {
@@ -616,6 +610,19 @@ class ApiService {
       return orders;
     } else {
       throw Exception('Failed to load orders');
+    }
+  }
+
+  static Future<List<String>> fetchProductImage(int productId) async {
+    final url = Uri.parse('http://103.77.243.218/productimages/$productId');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      List<String> images = List<String>.from(data['images']);
+      return images;
+    } else {
+      print('loi tai hinh anh ${response.statusCode}');
+      throw Exception(' loi tai hinh anh');
     }
   }
 }

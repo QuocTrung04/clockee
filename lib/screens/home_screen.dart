@@ -106,15 +106,13 @@ class _HomeScreenState extends State<HomeScreen> {
               width: double.infinity,
               height: 220,
               child: FutureBuilder<List<String>>(
-                future:
-                    ApiService.fetchBannerImages(), // Hàm gọi API lấy list ảnh
+                future: ApiService.fetchBannerImages(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Lỗi tải banner'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    // Nếu không có ảnh, bạn có thể hiện ảnh mặc định
                     return Image.asset(
                       'assets/images/dongho.png',
                       fit: BoxFit.cover,
@@ -135,9 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     options: CarouselOptions(
                       height: 220,
                       autoPlay: true,
-                      autoPlayInterval: Duration(seconds: 3),
+                      autoPlayInterval: Duration(seconds: 5),
                       enlargeCenterPage: true,
-                      viewportFraction: 1,
+                      viewportFraction: 0.8,
                     ),
                   );
                 },
@@ -548,11 +546,13 @@ class _SanPhamWidgetState extends State<SanPhamWidget> {
                           },
                           child: Image.asset(
                             widget.sanPham.favorite == 1
-                                ? 'assets/images/heart.png' 
+                                ? 'assets/images/heart.png'
                                 : 'assets/images/heartoutline.png',
-                            width: 24,    // đặt kích thước phù hợp
+                            width: 24, // đặt kích thước phù hợp
                             height: 24,
-                            color: const Color(0xFF662D91),  // Nếu bạn muốn đổi màu, hoặc bỏ dòng này nếu ảnh đầy màu
+                            color: const Color(
+                              0xFF662D91,
+                            ), // Nếu bạn muốn đổi màu, hoặc bỏ dòng này nếu ảnh đầy màu
                           ),
                         ),
                       ),

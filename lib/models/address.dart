@@ -69,6 +69,7 @@ class Address {
       isDefault: isDefault ?? this.isDefault,
     );
   }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

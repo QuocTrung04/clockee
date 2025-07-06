@@ -31,7 +31,24 @@ class _CheckoutPageState extends State<PayScreen> {
     Provider.of<AppData>(context).fetchAddressList(userData!.userId);
     final listAddress = Provider.of<AppData>(context).addresses;
 
-    selectedAddress = listAddress.isNotEmpty ? listAddress[0] : null;
+    Address? findSelectedAddress(Address? selected, List<Address> list) {
+      if (selected != null) {
+        try {
+          return list.firstWhere(
+            (addr) => addr.receiveid == selected.receiveid,
+          );
+        } catch (e) {
+          return null;
+        }
+      } else {
+        // Nếu chưa chọn gì thì trả về địa chỉ mặc định
+        try {
+          return list.firstWhere((addr) => addr.isDefault);
+        } catch (e) {
+          return null;
+        }
+      }
+    }
 
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
@@ -48,28 +65,57 @@ class _CheckoutPageState extends State<PayScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Địa chỉ
-            DropdownButton<Address>(
-              isExpanded: true,
-              value: selectedAddress,
-              hint: Text('Chọn địa chỉ'),
-              items: listAddress.map((address) {
-                return DropdownMenuItem<Address>(
-                  value: address,
-                  child: Text(
-                    address.addressDetail.isEmpty
-                        ? '${address.street}, ${address.commune}, ${address.district}, ${address.province}'
-                        : '${address.addressDetail}, ${address.street}, ${address.commune}, ${address.district}, ${address.province}',
-                  ),
-                );
-              }).toList(),
-              onChanged: (Address? newValue) {
-                setState(() {
-                  selectedAddress = newValue;
-                });
-              },
+            DropdownButtonHideUnderline(
+              child: DropdownButton<Address>(
+                isExpanded: true,
+                focusColor: Colors.transparent,
+                dropdownColor: Colors.white,
+                value: findSelectedAddress(selectedAddress, listAddress),
+                hint: Text('Chọn địa chỉ'),
+                items: listAddress.map((address) {
+                  return DropdownMenuItem<Address>(
+                    value: address,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(address.name),
+                            SizedBox(width: 5),
+                            Text(
+                              '|',
+                              style: TextStyle(color: Colors.grey.shade400),
+                            ),
+                            SizedBox(width: 5),
+                            Text(
+                              address.phone,
+                              style: TextStyle(color: Colors.grey.shade600),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            address.addressDetail.isEmpty
+                                ? Text(
+                                    '${address.street}, ${address.commune}, ${address.district}, ${address.province}',
+                                  )
+                                : Text(
+                                    '${address.addressDetail}, ${address.street}, ${address.commune}, ${address.district}, ${address.province}',
+                                  ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (Address? newValue) {
+                  setState(() {
+                    selectedAddress = newValue;
+                  });
+                },
+              ),
             ),
 
-            Divider(height: 32, thickness: 1),
+            Divider(height: 34, thickness: 1),
 
             ListView.builder(
               shrinkWrap: true,

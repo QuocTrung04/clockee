@@ -231,6 +231,7 @@
 //   }
 // }
 
+import 'package:clockee/models/sanpham.dart';
 import 'package:flutter/material.dart';
 
 // Giả sử bạn có model Order (bạn có thể tùy chỉnh theo API thật)
@@ -413,47 +414,77 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   Widget _buildOrderCard(Order order) {
+    final Product sanpham;
     return Card(
       color: Colors.white,
-      elevation: 3,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 8),
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.fromLTRB(10.0, 6, 10, 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                order.image,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    order.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    'https://i.ibb.co/Kpq5F9Qx/ra-as0106l30b-1730956198.png',
+                    width: 60,
+                    height: 60,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Giá: đ${order.price}',
-                    style: TextStyle(color: Colors.grey[700]),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('product.name', style: TextStyle(fontSize: 17)),
+                      Row(
+                        children: [
+                          Text(
+                            'product.model',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          Spacer(),
+                          Text('gfd', style: TextStyle(color: Colors.grey)),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: [
+                          Text(
+                            'gfdg',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                              decoration: TextDecoration.lineThrough,
+                              decorationColor: Colors.grey,
+                            ),
+                          ),
+                          SizedBox(width: 7),
+                          Text(
+                            'gfdg',
+                            style: TextStyle(
+                              color: Colors.purple,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Text(
-              'x${order.quantity}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [Text('Tổng số tiền (gf')],
             ),
           ],
         ),
