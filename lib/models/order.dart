@@ -11,7 +11,7 @@ class Order {
   final int paymentStatus;
   final DateTime createDate;
   final int orderStatus;
-  final DateTime responseDate;
+  final DateTime? responseDate;
   final List<OrderItem> items;
   Order({
     required this.orderId,
@@ -47,18 +47,23 @@ class Order {
     var itemsJson = json['Items'] as List<dynamic>? ?? [];
     List<OrderItem> itemList = itemsJson.map((e) => OrderItem.fromJson(e)).toList();
 
+    DateTime? parseDate(String? dateStr) {
+      if (dateStr == null || dateStr.isEmpty) return null;
+      return DateTime.parse(dateStr);
+    }
+
     return Order(
-      orderId: json['Order_id'],
-      userId: json['User_id'],
-      receiveId: json['Receive_id'],
-      totalPrice: json['Total_price'],
-      orderCode: json['Order_code'],
-      paymentMethod: json['Payment_method'],
-      paymentDate: json['Payment_date'],
-      paymentStatus: json['Payment_status'],
-      createDate: json['Create_date'],
-      responseDate: json['Response_date'],
-      orderStatus: json['Order_status'],
+      orderId: json['Order_id'] ?? 0,
+      userId: json['User_id'] ?? 0,
+      receiveId: json['Receive_id'] ?? 0,
+      totalPrice: json['Total_price'] ?? 0,
+      orderCode: json['Order_code'] ?? '',
+      paymentMethod: json['Payment_method'] ?? 0,
+      paymentDate: parseDate(json['Payment_date']),
+      paymentStatus: json['Payment_status'] ?? 0,
+      createDate: parseDate(json['Create_date']) ?? DateTime.now(),
+      responseDate: parseDate(json['Response_date']),
+      orderStatus: json['Order_status'] ?? 0,
       items: itemList,
     );
   }

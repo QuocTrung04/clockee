@@ -3,12 +3,18 @@ class OrderItem{
   final int orderId;
   final int quantity;
   final int totalPrice;
+  final String productName;
+  final int sellPrice;
+  final String imageUrl;
 
   OrderItem({
   required this.productId,
   required this.orderId,
   required this.quantity,
   required this.totalPrice,
+  required this.imageUrl,
+  required this.productName,
+  required this.sellPrice,
   });
 
   Map<String,dynamic> toJson(){
@@ -26,6 +32,9 @@ class OrderItem{
       orderId: json['Order_id'],
       quantity: json['Quantity'],
       totalPrice: json['Total_price'],
+      productName: json['Name'],
+      sellPrice: json['Sell_price'],
+      imageUrl: json['Image_url'],
     );
   }
 }
